@@ -2,9 +2,10 @@
 
 **Descripción**
 
-Aplicación web full-stack para planificar comidas diarias y generar listas de la compra con precios e información de productos de Mercadona.  
+Aplicación web full-stack para planificar comidas diarias y generar listas de la compra con precios e información de productos de Mercadona y de Dia.  
 Cada usuario dispone de un calendario mensual con 3 slots diarios (Desayuno, Comida, Cena) donde asigna recetas propias o predefinidas.  
 La app genera automáticamente la lista de la compra y el presupuesto diario y semanal, y permite añadir/eliminar productos manualmente.
+Los datos de los productos se recogen usando las apis de Mercadona y Dia mediante un scraper en python que me pasa los datos a CSV.
 
 ---
 
@@ -12,7 +13,7 @@ La app genera automáticamente la lista de la compra y el presupuesto diario y s
 
 - Frontend: Angular + Tailwind CSS  
 - Backend: NestJS (TypeORM, Passport.js, JWT, OAuth2)  
-- Scraper: Puppeteer/Playwright en NestJS  
+- Scraper: Python
 - WebSockets: Socket.IO  
 - Base de datos: MySQL/MariaDB (TypeORM, migraciones, semillas)  
 - Caché y Cron: Redis (jobs diarios)  
@@ -24,13 +25,16 @@ La app genera automáticamente la lista de la compra y el presupuesto diario y s
 
 | Acción                        | Usuario | Moderador                | Admin   |
 |-------------------------------|:-------:|:------------------------:|:-------:|
-| CRUD recetas propias         | ✔️      | ✔️                        | ✔️      |
-| CRUD recetas predefinidas    | ❌      | ✔️                        | ✔️      |
-| Editar recetas de usuarios   | ❌      | ✔️                        | ✔️      |
-| CRUD Calendario propio       | ✔️      | ✔️                        | ✔️      |
-| Editar calendarios ajenos    | ❌      | ❌                        | ✔️      |
-| Gestión usuarios y roles     | ❌      | ❌                        | ✔️      |
-| Gestión lista de la compra   | ✔️      | ✔️ (solo lectura)         | ✔️      |
+| CRUD recetas propias           | ✔️    | ✔️                        | ✔️      |
+| CRUD recetas predefinidas      | ❌    | ✔️                        | ✔️      |
+| Editar recetas de usuarios     | ❌    | ✔️                        | ✔️      |
+| CRUD Calendario propio         | ✔️    | ✔️                        | ✔️      |
+| Editar calendarios ajenos      | ❌    | ❌                        | ✔️      |
+| Gestión usuarios y roles       | ❌    | ❌                        | ✔️      |
+| Gestión lista de la compra     | ✔️    | ✔️ (solo lectura)         | ✔️      |
+| Apartado para compartir recetas| ✔️    | ✔️                        | ✔️      |
+| Eliminar recetas compartidas   | ❌    | ✔️                        | ✔️      |
+| Eliminar TU receta compartida  | ✔️    | ✔️                        | ✔️      |
 
 ---
 
