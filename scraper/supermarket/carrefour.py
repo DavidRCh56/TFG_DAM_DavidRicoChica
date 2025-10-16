@@ -1,4 +1,3 @@
-from excel_data import *
 import os
 from datetime import *
 import requests
