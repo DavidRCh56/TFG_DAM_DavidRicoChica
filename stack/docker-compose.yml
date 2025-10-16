@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mysql
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - skynet
+    ports:
+      - ${MYSQL_HOST_PORT}:3306
+    volumes:
+        - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+
+  adminer:
+    image: adminer
+    restart: "no"
+    networks:
+      - skynet
+    ports:
+      - ${ADMINER_HOST_PORT}:8080
+    
+networks:
+  skynet:

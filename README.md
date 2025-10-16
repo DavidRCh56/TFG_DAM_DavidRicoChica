@@ -92,7 +92,12 @@ Los datos de los productos se recogen usando las apis de Mercadona y Dia mediant
 │ │ └─ pages
 └─ tailwind.config.js
 
-/docker-compose.yml
+/stack
+├─ .env
+├─ .env.template
+├─ docker-compose.yml
+└─ setup.sql
+/.gitignore
 /README.md
 ```
 
@@ -118,9 +123,19 @@ docker-compose up --build
 4. Acceder a:  (obviamente cuando lo haga) 
 - Frontend: http://localhost:4200  
 - Backend: http://localhost:3000  
+- db-Adminer: http://localhost:8181
 
 ---
 
 ## Despliegue
 
+- Para acceder al adminer y lo que tengo hecho por ahora:
+```bash
+cd stack
+docker-compose up -d --build
+```
+- Para bajar el docker y eliminar recursos y todo:
+```bash
+docker-compose down
+```
 - Docker Compose para entornos de desarrollo y producción 
