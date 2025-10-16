@@ -1,4 +1,3 @@
-from excel_data import *
 from datetime import *
 import requests
 import pandas as pd

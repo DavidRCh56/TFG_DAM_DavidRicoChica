@@ -1,4 +1,3 @@
-from excel_data import *
 from supermarket.mercadona import *
 from supermarket.carrefour import *
 from supermarket.dia import *

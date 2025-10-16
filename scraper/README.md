@@ -42,11 +42,7 @@ python -m pip install --upgrade pip setuptools wheel
 python -m pip install "numpy>=2,<3"
 python -m pip install "pandas==2.2.3"
 ```
-# Motores Excel / IO
-```bash
-python -m pip install "openpyxl==3.1.2"
-python -m pip install "xlwt==1.3.0"
-```
+
 # Selenium y drivers
 ```bash
 python -m pip install "selenium==4.0.0"
