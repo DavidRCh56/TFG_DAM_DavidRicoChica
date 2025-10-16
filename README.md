@@ -169,3 +169,5 @@ que quiero que haya una funcion que actualice la base de datos y que solo lo pue
 voy a empezar por el backend, para probar las posibles peticiones con postman y para configurar las rutas
 de manera que se pueda acceder dependiendo del rol del usuario y del token que use para limitar el acceso y uso 
 de algunas funciones de la app.
+
+he creado los componentes usuarios y recetas, he añadido el scraper pero tengo que corregirlo, me he fijado en el csvq eu devuelve y hay datos movidos que estan mal, no los recoje bien, tengo que solucionar eso.
