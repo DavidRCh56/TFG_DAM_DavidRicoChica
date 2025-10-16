@@ -16,7 +16,7 @@ Windows (PowerShell/cmd)
 
 ```bash
 python -m venv nombre_del_entorno
-.nombre_del_entorno\Scripts\Activate.ps1
+nombre_del_entorno\Scripts\Activate
 ```
 
 Al activarlo verás el prefijo (.nombre_del_entorno) en la terminal y el comando python pertenecerá al entorno.
