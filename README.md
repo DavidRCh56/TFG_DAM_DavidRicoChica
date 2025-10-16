@@ -163,3 +163,9 @@ https://github.com/joseluam97/Supermarket-Price-Scraper
 este lo he modificado ya para que solo me de los datos de los supermercados Dia y Mercadona, le he añadido un readme
 para que donde sea que lo ejecutes (solo para windows), no te de fallos que a mi me dieron cuando lo intente usar conforme
 lo pone en el repositorio del que me fijé. 
+
+he creado los proyectos base del Frontend y el Backend, ahora implementare el scraper en la raiz del proyecto puesto
+que quiero que haya una funcion que actualice la base de datos y que solo lo puedan hacer los administradores y
+voy a empezar por el backend, para probar las posibles peticiones con postman y para configurar las rutas
+de manera que se pueda acceder dependiendo del rol del usuario y del token que use para limitar el acceso y uso 
+de algunas funciones de la app.
