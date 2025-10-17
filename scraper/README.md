@@ -65,6 +65,7 @@ python -m pip install "discordwebhook==1.0.3"
 ```bash
 python -m pip install "pipdeptree==2.13.2"
 python -m pip install "pylint==2.6.0"
+python -m pip install mysql-connector-python
 ```
 # Seguridad / APIs varias
 ```bash
@@ -82,7 +83,7 @@ Si usas Python 3.11, fija NumPy en versión 1.x:
 
 # Núcleo numérico compatible
 ```bash
-python -m pip install "numpy<2.0"          # Ejemplo: 1.26.4
+python -m pip install "numpy<2.0" 
 python -m pip install "pandas==2.0.3"
 ```
 # ✅ Verificaciones rápidas
@@ -105,6 +106,8 @@ mkdir .\export
 Instala en el orden indicado para evitar conflictos.
 
 Si seguiste todo esto al pie de la letra, tu scraper debería funcionar.
+
+El archivo import_csv.py sirve para poder subir los datos del csv a una base de datos cunado hayas un "py import_csv.py"
 
 # Errores sin solucionar
 

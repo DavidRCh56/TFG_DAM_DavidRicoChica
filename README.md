@@ -98,6 +98,20 @@ productos disponibles y sus precios).
 │ │ └─ pages
 └─ tailwind.config.js
 
+/scraper
+├─ export
+│ ├─ products.csv
+├─ supermarket
+│ ├─ carrefour.py
+│ ├─ dia.py
+│ └─ mercadona.py
+├─ .env
+├─ .gitignore
+├─ guia env.pdf
+├─ import_csv.py
+├─ main_supermarket.py
+└─ README.md
+
 /stack
 ├─ .env
 ├─ .env.template
@@ -169,3 +183,8 @@ que quiero que haya una funcion que actualice la base de datos y que solo lo pue
 voy a empezar por el backend, para probar las posibles peticiones con postman y para configurar las rutas
 de manera que se pueda acceder dependiendo del rol del usuario y del token que use para limitar el acceso y uso 
 de algunas funciones de la app.
+
+el error del scraper era por visualizarlo desde cscode, los datos estaban bien, y he creado un archivo nuevo en el scraper
+llamado import_csv.py que si existe el archivo products.csv en la carpeta export, al ejecutarlo sube todos los datos 
+del csv a la base de datos que esta abierta mediante docker, tambien he modificado el setup.sql para que me cree la tabla 
+de productos en la base de datos cuando se cree la misma
