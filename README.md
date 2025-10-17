@@ -24,6 +24,7 @@ productos disponibles y sus precios).
 - Base de datos: MySQL/MariaDB (TypeORM, migraciones, semillas), seguramente use MySQL si se me complica con MariaDB
 - Caché y Cron: Redis (jobs diarios) (tengo que investigar como hacerlo)
 - Contenerización: Docker + Docker Compose
+- Autenticación: firebase
 
 ---
 
@@ -187,4 +188,11 @@ de algunas funciones de la app.
 el error del scraper era por visualizarlo desde cscode, los datos estaban bien, y he creado un archivo nuevo en el scraper
 llamado import_csv.py que si existe el archivo products.csv en la carpeta export, al ejecutarlo sube todos los datos 
 del csv a la base de datos que esta abierta mediante docker, tambien he modificado el setup.sql para que me cree la tabla 
-de productos en la base de datos cuando se cree la misma
+de productos en la base de datos cuando se cree la misma.
+voy a empezar a hacer el login register y recoverpasword en el back he ire probando el funcionamiento en postman
+he creado mi proyecto en firebase y voy a seguir las instrucciones propias de firebase para implementarlo
+
+
+# TODO
+- Login, Register, RecoverPassword 
+- implementar firebase para autenticacion y recuperacion de contraseña
