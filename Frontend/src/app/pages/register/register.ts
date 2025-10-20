@@ -1,0 +1,45 @@
+import { Component } from '@angular/core';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../app';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [FormsModule, HttpClientModule],
+  templateUrl: './register.html',
+})
+export class Register {
+  email = '';
+  password = '';
+  backendUrl = environment.backendUrl;
+
+  constructor(private http: HttpClient) {}
+
+  async register() {
+    if (!this.email || !this.password) {
+      alert('Por favor completa los campos');
+      return;
+    }
+
+    try {
+      // 🔹 Crear usuario en Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
+      const token = await userCredential.user.getIdToken();
+
+      // 🔹 Notificar al backend (opcional: guardar usuario en BD)
+      const response: any = await firstValueFrom(
+        this.http.post(`${this.backendUrl}/auth/firebase-register`, { token })
+      );
+
+      console.log('Respuesta backend:', response);
+      alert('Registro exitoso 🎉');
+    } catch (error: any) {
+      console.error('Error al registrar:', error.message);
+      alert('Error al registrar: ' + error.message);
+    }
+  }
+}

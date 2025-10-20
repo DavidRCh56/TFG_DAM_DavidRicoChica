@@ -1,59 +1,73 @@
-# Frontend
+# 🧩 Frontend - Proyecto TFG (Angular + Firebase)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.6.
+Este es el **frontend** del proyecto TFG desarrollado con **Angular**, **Firebase Authentication** y **TailwindCSS**.  
+Proporciona un sistema de autenticación con **inicio de sesión**, **registro** y **recuperación de contraseña**, conectado al backend NestJS.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Tecnologías utilizadas
 
+- **Angular 17+ (Standalone Components)**
+- **Firebase Authentication**
+- **TailwindCSS**
+- **TypeScript**
+- **Angular Router**
+- **Angular Forms**
+
+---
+
+## ⚙️ Requisitos previos
+
+Antes de ejecutar el proyecto, asegúrate de tener instalado:
+
+- [Node.js](https://nodejs.org/) (versión 18 o superior)
+- [Angular CLI](https://angular.io/cli)
+
+Instalar Angular CLI si no lo tienes:
 ```bash
-ng serve
+npm install -g @angular/cli
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 📦 Instalación del proyecto
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Clona el repositorio (o copia la carpeta del frontend):
 
 ```bash
-ng generate component component-name
+git clone <url-del-repo>
+cd frontend
+npm install
 ```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🌐 Rutas disponibles
 
+| Ruta | Descripción |
+|------|--------------|
+| `/login` | Página de inicio de sesión. Permite autenticarse con correo y contraseña. |
+| `/register` | Página de registro de usuario. Permite crear una nueva cuenta en Firebase. |
+| `/recover-password` | Página de recuperación de contraseña. Envía un correo de restablecimiento usando Firebase. |
+| `/` | Redirección automática a `/login`. |
+
+## 🔑 Flujo de autenticación
+
+### Inicio de sesión:
+- Los usuarios ingresan correo y contraseña.
+- Se autentica con Firebase y se envía el token al backend (`/auth/firebase-login`).
+
+### Registro:
+- El usuario crea una cuenta nueva con Firebase.
+- Se guarda o valida desde el backend (`/auth/firebase-register`).
+
+### Recuperar contraseña:
+- Se ingresa un correo válido registrado en Firebase.
+- Firebase envía un enlace al correo para restablecer la contraseña.
+
+## Para ejecutar Angular
+
+- Primero fijate que el backend este en ejecucion.
+- Usa este comando:
 ```bash
-ng generate --help
+ng serve -o
 ```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- "ng serve" ejecuta Angular en http://localhost:4200 
+- "-o" te abre automaticamente la ruta donde se ejecuta.

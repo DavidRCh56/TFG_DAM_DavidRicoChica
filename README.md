@@ -85,7 +85,13 @@ productos disponibles y sus precios).
 /backend
 ├─ src
 │ ├─ auth
-│ ├─ recipes
+│ │ ├─ auth.controller.ts
+│ │ ├─ auth.module.ts
+│ │ └─ auth.service.ts
+│ ├─ firebase
+│ │ └─ firebase.service.ts
+│ ├─ recetas
+│ ├─ usuarios
 │ ├─ calendar
 │ ├─ shopping
 │ └─ scraper
@@ -97,7 +103,12 @@ productos disponibles y sus precios).
 │ │ ├─ components
 │ │ ├─ services
 │ │ └─ pages
-└─ tailwind.config.js
+│ ├─ firebaseConfig
+│ │ └─ firebase.config.ts
+│ └─ enviroments
+│   └─ enviroments.ts
+├─ tailwind.config.js
+└─ .env
 
 /scraper
 ├─ export

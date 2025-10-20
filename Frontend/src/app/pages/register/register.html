@@ -1,0 +1,27 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="p-6 max-w-sm w-full bg-white rounded-2xl shadow">
+    <h2 class="text-2xl font-semibold mb-4 text-center">Crear cuenta</h2>
+    <form (ngSubmit)="register()" class="flex flex-col gap-3">
+      <input
+        [(ngModel)]="email"
+        name="email"
+        type="email"
+        placeholder="Correo electrónico"
+        class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+      <input
+        [(ngModel)]="password"
+        name="password"
+        type="password"
+        placeholder="Contraseña"
+        class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+      <button
+        type="submit"
+        class="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition"
+      >
+        Registrarse
+      </button>
+    </form>
+  </div>
+</div>
