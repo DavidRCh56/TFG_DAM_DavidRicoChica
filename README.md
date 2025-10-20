@@ -203,7 +203,31 @@ de productos en la base de datos cuando se cree la misma.
 voy a empezar a hacer el login register y recoverpasword en el back he ire probando el funcionamiento en postman
 he creado mi proyecto en firebase y voy a seguir las instrucciones propias de firebase para implementarlo
 
+He terminado de hacer el login register y recoverpasword hecho todo con firebase, he subido a la misma vez el back y el front
+ya que se me hacia mas facil hacer las dos cosas a la vez en vez de hacer promero el back y luego el front o al reves.
+Tiene un estilo muy basico, que ya cambiare en un futuro, de momento funciona bien creo, me crea usuarios en firebase,
+puedo hacer login y puedo mandarme un correo de recueracion de contraseña, de momento solo hasta ahí.
 
 # TODO
-- Login, Register, RecoverPassword 
-- implementar firebase para autenticacion y recuperacion de contraseña
+- Añadir protección de rutas en el backend (según rol de usuario).
+- Implementar roles de usuario (cliente por defecto, moderador, admin).
+- Crear un usuario admin por defecto en la base de datos al iniciar el proyecto.
+- Permitir que un usuario cliente modifique sus propios datos (nombre, email, etc.).
+- Permitir que un admin modifique los datos de otros usuarios.
+- Implementar CRUD de recetas (crear, editar, eliminar, listar).
+- Implementar favoritos de recetas y sistema de búsqueda.
+- Implementar sección de recetas compartidas (todos los usuarios pueden ver/guardar).
+- Crear calendario de comidas (mensual, con slots: desayuno, comida, cena).
+- Generar lista de la compra automática basada en el calendario.
+- Implementar cálculo de presupuesto diario/semanal.
+- Integrar el scraper desde el backend (solo ejecutable por admin).
+- Conectar la base de datos MySQL/MariaDB con TypeORM y probar importación CSV.
+- Añadir notificaciones en tiempo real (Socket.IO) para cambios en la lista de la compra.(no seguro, tengo que ver)
+- Implementar histórico de presupuestos (consultar días y semanas anteriores).(no seguro, tengo que ver)
+- Añadir sistema de caché y cron jobs con Redis (actualizaciones automáticas).(no seguro, tengo que ver)
+- Contenerizar todo el stack (frontend, backend, scraper, DB, Redis) con Docker Compose.
+- Mejorar el diseño del frontend (Tailwind, componentes, UX).
+- Añadir autenticación federada (Google, Facebook) con Firebase.
+- Proteger el endpoint del scraper para que solo el admin lo pueda ejecutar.
+- Documentar todas las rutas del backend en Swagger o Postman.
+- Redactar la documentación final (README completo del proyecto + guía de despliegue).
