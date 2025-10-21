@@ -208,6 +208,10 @@ ya que se me hacia mas facil hacer las dos cosas a la vez en vez de hacer promer
 Tiene un estilo muy basico, que ya cambiare en un futuro, de momento funciona bien creo, me crea usuarios en firebase,
 puedo hacer login y puedo mandarme un correo de recueracion de contraseña, de momento solo hasta ahí.
 
+ayer me dijeron en l aempresa que me interesaria mas hacer el tema del login sin firebase porque se podria llegar a complicar 
+a la hora de conectar datos en el caso de que el proyecto en un futuro fuera a mas, tengo que pensarlo pero creo que aprovechare
+el login que hicimos aqui para implementarlo en el proyecto y cambiar el de firebase aunque tendria que añadir gmail, etc.
+
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).
 - Implementar roles de usuario (cliente por defecto, moderador, admin).
