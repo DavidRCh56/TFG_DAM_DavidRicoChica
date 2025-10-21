@@ -109,6 +109,8 @@ Si seguiste todo esto al pie de la letra, tu scraper debería funcionar.
 
 El archivo import_csv.py sirve para poder subir los datos del csv a una base de datos cunado hayas un "py import_csv.py"
 
+La recoleccion de los datos y creacion de archivos csv se toma aproximadamente 11 minutos(tener en cuenta para futuras automatizaciones)
+
 # Errores sin solucionar
 
 - La cookie del carrefour no funciona, sospecho que es porque la api esta en mantenimiento, no es seguro,

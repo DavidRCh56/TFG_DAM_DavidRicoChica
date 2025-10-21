@@ -212,6 +212,11 @@ ayer me dijeron en l aempresa que me interesaria mas hacer el tema del login sin
 a la hora de conectar datos en el caso de que el proyecto en un futuro fuera a mas, tengo que pensarlo pero creo que aprovechare
 el login que hicimos aqui para implementarlo en el proyecto y cambiar el de firebase aunque tendria que añadir gmail, etc.
 
+Me dijeron en la empresa de no tener varias vistas para varios usuarios, sino que yo recoja el rol
+del usuario y despues con un ngif gestione que roles pueden ver una parte de la pagina y a que roles no les aparece,
+esto en un listado lateral o similar, que a algunos usuarios le aparezcan mas elementos en la lista que a otros.
+Tambien me han recomendado poner logs para ver desde el backend para controlar mejor los errores.
+
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).
 - Implementar roles de usuario (cliente por defecto, moderador, admin).
