@@ -144,18 +144,38 @@ git clone https://github.com/DavidRCh56/TFG_DAM_DavidRicoChica
 cd TFG_DAM_DavidRicoChica
 ```
 
-2. Configurar variables de entorno (`.env`)
+2. Configurar todas las variables de entorno (`.env`)
 
-3. Levantar servicios con Docker Compose (obviamente cuando lo haga)
+3. Levantar servicios con Docker Compose
 
 ```bash
 docker-compose up --build
 ```
 
-4. Acceder a:  (obviamente cuando lo haga) 
-- Frontend: http://localhost:4200  
-- Backend: http://localhost:3000  
-- db-Adminer: http://localhost:8181
+4. Acceder a:
+- Adminer: http://localhost:8181  
+- db: http://localhost:33306
+
+5. Levantar el backend:
+```bash
+cd backend
+npm install
+npm run start
+```
+
+6. Levantar el frontend:
+```bash
+cd frontend
+npm install
+ng serve
+```
+
+7. Ejecutar por primera vez el scraper para añadir los datos a la base de datos:
+
+He creado una funcion en el backend que ejecuta el scraper sin necesidad de acceder
+a la carpeta del scraper, creando la variable de entorno e instalando las dependencias
+en el caso de que sea necesario y realizando el scrapeo recogiendo los datos y 
+subiendolos.
 
 ---
 
@@ -170,8 +190,6 @@ docker-compose up -d --build
 ```bash
 docker-compose down
 ```
-- Docker Compose para entornos de desarrollo y producción
-
 
 # Progreso de lo que voy haciendo avanzando para luego documentar correctamente
 
@@ -232,7 +250,12 @@ para empezar con la ejecucion del archivo import_csv.py. Lo malo es que se neces
 respectivas dependencias, etc, no se si lo cambiare para que al darle al boton se cree o no, ya que al menos en la primera
 ejecucion tardaria mas(creo que aproximadamente unos 20 minutos en total para subir los datos a la base de datos, aunque podria
 hacer para que solo lo ejecutara la primera vez usando un condicional). Creo que voy a hacer eso, pero primero voy a hacer
-un commit push por si la lio
+un commit push por si la lio. ahora usando lo mismo de antes, para poner los comandos y ir a algunas rutas, pondre un 
+condicional de manera que si detecta o entiende que no existe la carpeta venv, que la cree e instale las dependencias, 
+haciendo que en la siguiente vez, si detecta que ya si existe la carpeta, que se salte este paso. Al final he creado una 
+variable con la ruta de la carpeta venv y usando un if-else y usando "fs.existsSync" para comprobar la ruta de la variable
+que he creado, devolviendome un true o un false, y dependiendo de esto se ejecuta la creacion del entorno virtual y la instalacion
+de las dependencias, y si se vuelve a pulsar el boton, ya si encuentra la carpeta y omite esta parte
 
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).

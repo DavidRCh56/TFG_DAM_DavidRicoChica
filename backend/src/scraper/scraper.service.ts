@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as path from 'path';
+import * as fs from 'fs';
 
 // Promisify exec para poder usarlo con async/await,
 // facilitando la ejecución de comandos shell y el manejo de errores.
@@ -25,6 +26,8 @@ export class ScraperService {
   // Ruta base donde residen los scripts Python, usada para establecer directorio de trabajo
   // (main_supermarket.py e import_csv.py).
   private scraperPath = path.join(process.cwd(), '..', 'scraper');
+  // Ruta donde se encuentra el entorno virtual venv
+  private venvFolder = path.join(process.cwd(), '..', 'scraper', 'venv');
 
   //Uso execAsync (exec promisificado) para controlar la ejecución y esperar su finalización
   //de forma secuencial con async/await, ya que el archivo main_supermarket.py tarda unos 12 minutos
@@ -33,6 +36,40 @@ export class ScraperService {
 
   async ejecutarScraper(): Promise<void> {
     try {
+      if (!fs.existsSync(this.venvFolder)) {
+        this.logger.log(
+          'No se detecta entorno virtual venv, creando uno nuevo...',
+        );
+        // Crear entorno virtual y acceder a él, luego instalar dependencias
+        await execAsync(`python -m venv venv`, { cwd: this.scraperPath });
+        this.logger.log(
+          'Entorno virtual creado. Instalando paquetes necesarios...',
+        );
+        // Instalar paquetes uno por uno (puedes concatenar o crear un script .bat/.sh)
+        // Ejemplo simplificado (en Windows, adapta si usas Linux/Mac)
+        await execAsync(
+          `venv\\Scripts\\Activate && python -m pip install --upgrade pip setuptools wheel`,
+          { cwd: this.scraperPath },
+        );
+        await execAsync(
+          `venv\\Scripts\\Activate && python -m pip install "numpy>=2,<3"`,
+          { cwd: this.scraperPath },
+        );
+        await execAsync(
+          `venv\\Scripts\\Activate && python -m pip install "pandas==2.2.3"`,
+          { cwd: this.scraperPath },
+        );
+        await execAsync(
+          `venv\\Scripts\\Activate && python -m pip install selenium==4.0.0 webdriver-manager==3.5.2 chromedriver-autoinstaller==0.6.3 chromedrivermanager==0.0.1 requests python-dotenv==1.0.0 bs4==0.0.1 by==0.0.4 discord-webhook==1.1.0 discordwebhook==1.0.3 pipdeptree==2.13.2 pylint==2.6.0 mysql-connector-python pyOpenSSL==23.3.0 pyowm==3.3.0 pywhatkit==5.4 service==0.6.0 cfscrape==2.1.1`,
+          { cwd: this.scraperPath },
+        );
+        this.logger.log('Instalación de paquetes completada.');
+      } else {
+        this.logger.log(
+          'Entorno virtual detectado, saltando creación y configuración.',
+        );
+      }
+
       this.logger.log(
         'Ejecutando main_supermarket.py con entorno virtual python',
       );
