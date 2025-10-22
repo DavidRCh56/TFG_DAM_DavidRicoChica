@@ -22,9 +22,22 @@
       >
         Entrar
       </button>
+
       <p class="text-center text-sm text-gray-600 mt-4">
         <a href="http://localhost:4200/recover-password" class="text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
       </p>
     </form>
+
+    <!-- Botón scraper solo aparece tras login exitoso -->
+    <button
+      (click)="ejecutarScraper()"
+      [disabled]="ejecutando"
+      class="bg-green-500 text-white p-2 rounded mt-4 hover:bg-green-600 transition w-full"
+    >
+      {{ ejecutando ? 'Ejecutando Scraper...' : 'Ejecutar Scraper de Productos' }}
+    </button>
+    <div *ngIf="mensajeScraper" class="text-center mt-2">
+      {{ mensajeScraper }}
+    </div>
   </div>
 </div>

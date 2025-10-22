@@ -217,6 +217,23 @@ del usuario y despues con un ngif gestione que roles pueden ver una parte de la 
 esto en un listado lateral o similar, que a algunos usuarios le aparezcan mas elementos en la lista que a otros.
 Tambien me han recomendado poner logs para ver desde el backend para controlar mejor los errores.
 
+Ahora que tengo mas o menos la base del login con firebase, voy a intentar crear una funcion en el backend 
+que se encargue de ejecutar el scraper(el archivo main_supermarket.py), que espere aproximadamente 11-12
+minutos que es lo que he medido que tarda en recoger los datos y poner los csv en la carpeta export y 
+que despues de ese tiempo ejecute el archivo import_csv.py para actualizar la base de datos en adminer.
+
+Se me habia presentado el problema de que para ejecutar los archivos .py tenia que ejecutar un par de comandos
+en la terminal, e investigando un poco he descubierto que usando child_process, concretamente importando la funcion exec, 
+me permite "ejecutar" comandos en consola haciendo que pueda introducir los comandos respectivos para poner en funcionamineto 
+el scraper, tambien usando path puedo como decir la ruta en la que ejecutar dichos comandos, pudinedo navegar por las carpetas del 
+proyecto donde se encuentran los archivos a ejecutar, a demas he usado la funcion promisify para poder usar async y await a la hora 
+de ejecutar los archivos para asi conseguir que al ejecutar el archivo main_supermarket.py se espere a que finaliza su ejecucion 
+para empezar con la ejecucion del archivo import_csv.py. Lo malo es que se necestia tener creado el entorno virtual con las
+respectivas dependencias, etc, no se si lo cambiare para que al darle al boton se cree o no, ya que al menos en la primera
+ejecucion tardaria mas(creo que aproximadamente unos 20 minutos en total para subir los datos a la base de datos, aunque podria
+hacer para que solo lo ejecutara la primera vez usando un condicional). Creo que voy a hacer eso, pero primero voy a hacer
+un commit push por si la lio
+
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).
 - Implementar roles de usuario (cliente por defecto, moderador, admin).
