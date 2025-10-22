@@ -45,8 +45,6 @@ export class ScraperService {
         this.logger.log(
           'Entorno virtual creado. Instalando paquetes necesarios...',
         );
-        // Instalar paquetes uno por uno (puedes concatenar o crear un script .bat/.sh)
-        // Ejemplo simplificado (en Windows, adapta si usas Linux/Mac)
         await execAsync(
           `venv\\Scripts\\Activate && python -m pip install --upgrade pip setuptools wheel`,
           { cwd: this.scraperPath },
