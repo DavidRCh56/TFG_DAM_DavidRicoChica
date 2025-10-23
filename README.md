@@ -255,7 +255,28 @@ condicional de manera que si detecta o entiende que no existe la carpeta venv, q
 haciendo que en la siguiente vez, si detecta que ya si existe la carpeta, que se salte este paso. Al final he creado una 
 variable con la ruta de la carpeta venv y usando un if-else y usando "fs.existsSync" para comprobar la ruta de la variable
 que he creado, devolviendome un true o un false, y dependiendo de esto se ejecuta la creacion del entorno virtual y la instalacion
-de las dependencias, y si se vuelve a pulsar el boton, ya si encuentra la carpeta y omite esta parte
+de las dependencias, y si se vuelve a pulsar el boton, ya si encuentra la carpeta y omite esta parte.
+esto es el mismo dia 
+Le he preguntado un par de dudas a juangu referente a la base de datos que usare en un futuro en la app y alguna duda
+referente a la documentacion del proyecto, cuando me responda hare la base de datos que intentare que sea la definitiva 
+para no tener que cambiar nada y trabajar durante todo el proyecto con la misma base de datos y cuando tenga claro eso,
+hare los archivos .puml para crear los diagramas de clases y de casos de uso. Mientras espero su respuesta, voy a
+decorar un poco el login register y recover-password usando Tailwind y poniendolo algo mas decente.
+He estado viendo y hay calendarios ya hechos con Tailwinds en: https://freefrontend.com/tailwind-calendars/
+
+Me ha surgido otro problema, y es que tailwinds no se detecta y no me muestra los estilos que hay puestos.
+ya lo he conseguido solicionar, a lo visto era que han subido de version y habian cambiado la forma de importar
+tailwinds, yo lo estaba haciendo como lo hice con el proyecto que me dieron aqui pero entre que lo hice y ahora 
+han subido de version y han cambiado la manera de implementarlo, usando ahora "@import "tailwindcss";"
+en vez de "@tailwind base; @tailwind components; @tailwind utilities;" ademas, habia desinstalado y reinstalado 
+tailwind por si acaso "npm install/uninstall tailwindcss @tailwindcss/postcss postcss --force", ademas ahora 
+a lo visto se usa un archivo ".postcssrc.json", cuando yo lo use antes con un archivo "postcss.config.json".
+Tambien decir que ahora no hace falta un archivo "tailwind.config.js que se usaba antes.
+Le he metido estilos al login register y recover-password, haciendo que se ven similares pero con sus funciones respectivas,
+ademas he creado gracias a nanobanana un logotipo y una imagen que uso en el login que mas o menos representan
+la idea de la app, estas imagenes las he subido a https://archive.org/ para que las imagenes no ocupen espacio en el 
+proyecto y que sean mas faciles de importar, seguramente haga eso con mas imagenes que use.
+
 
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).
