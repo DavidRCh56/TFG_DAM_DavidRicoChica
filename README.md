@@ -277,6 +277,18 @@ ademas he creado gracias a nanobanana un logotipo y una imagen que uso en el log
 la idea de la app, estas imagenes las he subido a https://archive.org/ para que las imagenes no ocupen espacio en el 
 proyecto y que sean mas faciles de importar, seguramente haga eso con mas imagenes que use.
 
+le he añadido la tipica ventana para iniciar sesion con una cuenta de google, esta accion tambien crea el usuario en caso 
+de que no exista, todo para que el registro/login sea mucho mas dinámico. deberia de cambiarle el nombre al proyecto y 
+modificar las plantillas por defecto que me da firebase, es un detalle que no es necesario pero le da un toque mas personalizado.
+He mirado y firebase no te permite editar las plantillas para evitar temas de spam asi que asi se queda. 
+
+He añadido un par de funciones al login y register, que son en ambos el poder visualizar la contraseña que se ha introdicido,
+he creado una pagina principal base que tiene una funcion para no tener que crear muchas paginas, que se encarga de detectar en un
+nav, que componente se esta mostrando, haciendo que se oculten los demas, y al pulsar en otro componente, se ocultan todos y
+solo el pulsado se muestra, tengo pensado hacer algo parecido con el tema de los roles, como vi que lo hicieron en la empresa, 
+simplificando mucho mas el codigo y ahorrando trabajo. ademas tengo que crear todavia el logout y ver como hacer si o si 
+las bases de datos.
+
 
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).

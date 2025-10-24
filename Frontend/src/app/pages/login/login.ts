@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../app';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -19,6 +20,7 @@ export class Login {
   email = '';
   password = '';
   backendUrl = environment.backendUrl;
+  mostrarContrasena = false;
 
   // Estados extra para feedback scraper
   loggedIn = false;
@@ -26,6 +28,10 @@ export class Login {
   mensajeScraper = '';
 
   constructor(private http: HttpClient, private scraperService: ScraperService) {}
+
+  cambiarVisibilidadContrasena() {
+    this.mostrarContrasena = !this.mostrarContrasena;
+  }
 
   async login() {
     if (!this.email || !this.password) {
@@ -49,6 +55,27 @@ export class Login {
     } catch (error: any) {
       console.error('Error de autenticación Firebase:', error.message);
       alert('Error al iniciar sesión: ' + error.message);
+      this.loggedIn = false;
+    }
+  }
+
+  async loginConGoogle() {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const token = await user.getIdToken();
+
+      const response = await firstValueFrom(
+        this.http.post(`${this.backendUrl}/auth/firebase-login`, { token })
+      );
+
+      alert('Inicio de sesión con Google exitoso ✅');
+      this.loggedIn = true;
+      this.mensajeScraper = '';
+    } catch (error: any) {
       this.loggedIn = false;
     }
   }
