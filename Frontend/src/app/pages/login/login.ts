@@ -79,17 +79,4 @@ export class Login {
       this.loggedIn = false;
     }
   }
-
-  async ejecutarScraper() {
-    this.ejecutando = true;
-    this.mensajeScraper = '';
-    try {
-      const resp: any = await firstValueFrom(this.scraperService.ejecutarScraper());
-      this.mensajeScraper = resp.message || 'Scraper ejecutado con éxito.';
-    } catch (err) {
-      this.mensajeScraper = 'Error al ejecutar el scraper.';
-    } finally {
-      this.ejecutando = false;
-    }
-  }
 }

@@ -65,16 +65,6 @@
           </button>
         </div>
       </div>
-      <button
-        (click)="ejecutarScraper()"
-        [disabled]="ejecutando"
-        class="bg-green-500 text-white p-2 rounded-lg mt-6 hover:bg-green-600 transition w-full"
-      >
-        {{ ejecutando ? 'Ejecutando Scraper...' : 'Ejecutar Scraper de Productos' }}
-      </button>
-      <div *ngIf="mensajeScraper" class="text-center mt-2 text-gray-700 dark:text-gray-300">
-        {{ mensajeScraper }}
-      </div>
     </div>
   </div>
   <div class="hidden md:block md:flex-1">

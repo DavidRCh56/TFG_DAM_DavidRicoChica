@@ -261,7 +261,9 @@ Le he preguntado un par de dudas a juangu referente a la base de datos que usare
 referente a la documentacion del proyecto, cuando me responda hare la base de datos que intentare que sea la definitiva 
 para no tener que cambiar nada y trabajar durante todo el proyecto con la misma base de datos y cuando tenga claro eso,
 hare los archivos .puml para crear los diagramas de clases y de casos de uso. Mientras espero su respuesta, voy a
-decorar un poco el login register y recover-password usando Tailwind y poniendolo algo mas decente.
+decorar un poco el login register y recover-password usando Tailwind y poniendolo algo mas decente, me he fijado en 
+https://tailwindcss.com/plus/ui-blocks/application-ui/forms/sign-in-forms y hay uno que me ha gustado pero como es de pago
+he ido a https://www.creative-tim.com/twcomponents/components/logins que tiene componentes varios y logins parecidos al que me gusta.
 He estado viendo y hay calendarios ya hechos con Tailwinds en: https://freefrontend.com/tailwind-calendars/
 
 Me ha surgido otro problema, y es que tailwinds no se detecta y no me muestra los estilos que hay puestos.
@@ -288,6 +290,11 @@ nav, que componente se esta mostrando, haciendo que se oculten los demas, y al p
 solo el pulsado se muestra, tengo pensado hacer algo parecido con el tema de los roles, como vi que lo hicieron en la empresa, 
 simplificando mucho mas el codigo y ahorrando trabajo. ademas tengo que crear todavia el logout y ver como hacer si o si 
 las bases de datos.
+Ahora que tengo la pagina principal he eliminado el ejecutar scraper del login, porque lo habia puesto ahi para 
+comprobar de que si funcionaba 
+
+He creado ya la base de datos que usare para el proyecto, ahora me toca empezar a plantear como se realizarian los metodos
+y tambien deberia empezar a ordenar la documentacion y a crear los archivos para los diagramas de clases y de casos de uso.
 
 
 # TODO
