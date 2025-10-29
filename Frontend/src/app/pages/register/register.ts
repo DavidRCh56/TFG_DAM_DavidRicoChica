@@ -32,11 +32,9 @@ export class Register {
     }
 
     try {
-      // 🔹 Crear usuario en Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
       const token = await userCredential.user.getIdToken();
 
-      // 🔹 Notificar al backend (opcional: guardar usuario en BD)
       const response: any = await firstValueFrom(
         this.http.post(`${this.backendUrl}/auth/firebase-register`, { token })
       );

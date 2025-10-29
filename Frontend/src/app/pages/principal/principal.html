@@ -1,81 +1,83 @@
 <div class="flex h-screen">
   <nav class="flex flex-col w-52 h-full bg-white border-r border-gray-300 p-4 items-center">
-    <!-- Logo -->
     <div class="mb-8">
       <img src="https://ia800405.us.archive.org/15/items/logo_20251023/logo.png" alt="Logo" class="h-14 w-auto" />
     </div>
-    <!-- Botones de menú -->
-    <button
-      (click)="setActiveSection('resumenSemanal')"
-      [ngClass]="{
-        'bg-gray-300': resumenSemanal,
-        'hover:bg-gray-200': !resumenSemanal
-      }"
-      class="w-full p-2 mb-2 rounded text-left transition"
-    >
-      Resumen semanal
-    </button>
-    <button
-      (click)="setActiveSection('miCalendario')"
-      [ngClass]="{
-        'bg-gray-300': miCalendario,
-        'hover:bg-gray-200': !miCalendario
-      }"
-      class="w-full p-2 mb-2 rounded text-left transition"
-    >
-      Mi Calendario
-    </button>
-    <button
-      (click)="setActiveSection('listaCompra')"
-      [ngClass]="{
-        'bg-gray-300': listaCompra,
-        'hover:bg-gray-200': !listaCompra
-      }"
-      class="w-full p-2 mb-2 rounded text-left transition"
-    >
-      Lista de la compra
-    </button>
-    <button
-      (click)="setActiveSection('recetas')"
-      [ngClass]="{
-        'bg-gray-300': recetas,
-        'hover:bg-gray-200': !recetas
-      }"
-      class="w-full p-2 mb-2 rounded text-left transition"
-    >
-      Recetas
-    </button>
-    <button
-      (click)="setActiveSection('foroRecetas')"
-      [ngClass]="{
-        'bg-gray-300': foroRecetas,
-        'hover:bg-gray-200': !foroRecetas
-      }"
-      class="w-full p-2 mb-8 rounded text-left transition"
-    >
-      Foro de Recetas
-    </button>
+    <div class="flex flex-col w-full flex-1">
+      <button
+        (click)="setActiveSection('resumenSemanal')"
+        [ngClass]="{
+          'bg-gray-300': resumenSemanal,
+          'hover:bg-gray-200': !resumenSemanal
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Resumen semanal
+      </button>
+      <button
+        (click)="setActiveSection('miCalendario')"
+        [ngClass]="{
+          'bg-gray-300': miCalendario,
+          'hover:bg-gray-200': !miCalendario
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Mi Calendario
+      </button>
+      <button
+        (click)="setActiveSection('listaCompra')"
+        [ngClass]="{
+          'bg-gray-300': listaCompra,
+          'hover:bg-gray-200': !listaCompra
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Lista de la compra
+      </button>
+      <button
+        (click)="setActiveSection('recetas')"
+        [ngClass]="{
+          'bg-gray-300': recetas,
+          'hover:bg-gray-200': !recetas
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Recetas
+      </button>
+      <button
+        (click)="setActiveSection('foroRecetas')"
+        [ngClass]="{
+          'bg-gray-300': foroRecetas,
+          'hover:bg-gray-200': !foroRecetas
+        }"
+        class="w-full p-2 mb-8 rounded text-left transition"
+      >
+        Foro de Recetas
+      </button>
 
-    <!-- Botón Actualizar precios / Logout abajo -->
-    <button
-      (click)="ejecutarScraper()"
-      [disabled]="ejecutando"
-      class="w-full mb-2 bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition"
-    >
-      {{ ejecutando ? 'Actualizando precios...' : 'Actualizar precios' }}
-    </button>
-    <div *ngIf="mensajeScraper" class="text-center mt-2 text-sm text-gray-700">
-      {{ mensajeScraper }}
+      <div class="mt-auto w-full">
+        <button
+          (click)="ejecutarScraper()"
+          [disabled]="ejecutando"
+          class="w-full mb-2 bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition"
+        >
+          {{ ejecutando ? 'Actualizando precios...' : 'Actualizar precios' }}
+        </button>
+
+        <div *ngIf="mensajeScraper" class="text-center mt-2 text-sm text-gray-700">
+          {{ mensajeScraper }}
+        </div>
+
+        <button
+          (click)="alert('Cerrar sesión - funcionalidad no implementada')"
+          class="w-full p-2 bg-gray-500 text-white rounded hover:bg-gray-400 transition mt-2"
+        >
+          Cerrar sesión
+        </button>
+      </div>
     </div>
-    <button
-      (click)="alert('Cerrar sesión - funcionalidad no implementada')"
-      class="w-full p-2 bg-gray-500 text-white rounded hover:bg-gray-400 transition mt-2"
-    >
-      Cerrar sesión
-    </button>
   </nav>
 
-  <!-- Contenido principal ocupa el resto -->
   <main class="flex-1 p-6 bg-gray-50 overflow-auto">
     <section *ngIf="resumenSemanal">
       <h2 class="text-xl mb-2">Resumen Semanal</h2>
@@ -95,7 +97,7 @@
     </section>
     <section *ngIf="foroRecetas">
       <h2 class="text-xl mb-2">Foro de Recetas</h2>
-      <p>Participa en la comunidad compartiendo y discutiendo recetas.</p>
+      <p>Participa en la comunidad compartiendo recetas.</p>
     </section>
   </main>
 </div>

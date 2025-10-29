@@ -11,25 +11,21 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
   imports: [CommonModule, HttpClientModule],
 })
 export class Principal {
-  // Estados de cada sección
   resumenSemanal: boolean = true;
   miCalendario: boolean = false;
   listaCompra: boolean = false;
   recetas: boolean = false;
   foroRecetas: boolean = false;
   sidebarHidden = true;
-  darkMode: boolean = true; // O true si quieres modo oscuro por defecto
+  darkMode: boolean = true;
 
 
-  // Estado para actualizar precios (scraper)
   ejecutando: boolean = false;
   mensajeScraper: string = '';
 
   constructor(private http: HttpClient, private scraperService: ScraperService) {}
 
-  // Cambia la sección activa según el botón pulsado
   setActiveSection(nombre: string) {
-    // Todas a false, la seleccionada a true
     this.resumenSemanal = false;
     this.miCalendario = false;
     this.listaCompra = false;
@@ -55,7 +51,6 @@ export class Principal {
     }
   }
 
-  // Funcionalidad para ejecutar el scraper
   async ejecutarScraper() {
     this.ejecutando = true;
     this.mensajeScraper = '';
@@ -68,6 +63,7 @@ export class Principal {
       this.ejecutando = false;
     }
   }
+
   alert(mensaje: string) {
     window.alert(mensaje);
   }
