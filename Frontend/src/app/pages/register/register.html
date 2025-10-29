@@ -11,12 +11,22 @@
       </p>
       <form (ngSubmit)="register()" class="flex flex-col gap-4">
         <input
+          [(ngModel)]="nombreUsuario"
+          name="nombreUsuario"
+          type="text"
+          autocomplete="username"
+          placeholder="Nombre de usuario"
+          class="w-full rounded-xl border border-gray-700 p-3 pr-12 bg-gray-800 text-white placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-600 focus:outline-none transition"
+          required
+        />
+        <input
           [(ngModel)]="email"
           name="email"
           type="email"
           autocomplete="email"
           placeholder="Correo electrónico"
           class="w-full rounded-xl border border-gray-700 p-3 pr-12 bg-gray-800 text-white placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-600 focus:outline-none transition"
+          required
         />
         <div class="relative">
           <input

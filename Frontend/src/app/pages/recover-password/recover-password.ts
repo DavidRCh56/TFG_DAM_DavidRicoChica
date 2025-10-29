@@ -25,7 +25,7 @@ export class RecoverPassword {
       alert(
         'Se ha enviado un enlace de recuperación a tu correo electrónico. Revisa tu bandeja de entrada o spam.'
       );
-      this.router.navigate(['/']);
+      this.router.navigate(['/login']);
     } catch (error) {
       console.error(error);
       alert('Error al enviar el correo. Verifica que el correo esté registrado.');

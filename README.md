@@ -296,6 +296,26 @@ comprobar de que si funcionaba
 He creado ya la base de datos que usare para el proyecto, ahora me toca empezar a plantear como se realizarian los metodos
 y tambien deberia empezar a ordenar la documentacion y a crear los archivos para los diagramas de clases y de casos de uso.
 
+He creado los archivos base para la documentacion, ahora se me ha presentado una duda, como conecto el uid que se crea
+en firebase al crear un usuario, con mi base de datos mysql para relacionar unos datos como las recetas a unos usuarios
+en especifico. He modificado una cosa de la base de datos, que no habia caido antes, he puesto el nombre de usuario como
+"UNIQUE" para que solo pueda haber un usuario con ese nombre.
+Para resolver la duda de conectar firebase authentication con mi base de datos he navegado por internet adentrandome 
+en varios foros donde hablaban del tema y he concluido que la mejor manera de conectarlos seria creando un metodo en el 
+frontend que cuando un usuario se registre desde el register, este metodo, que es el mismo que usaba con solo lo de 
+firebase, me recoja los datos que ha introducido el usuario y el uid que le asigna firebase, y los mando a un metodo
+del backend que solicita estos datos para crear un usuario con dichos datos, sincronizando de esta manera el uid con 
+los demas datos que voy a usar en la app. El backend tiene basicamente un endpoint /usuarios, con un metodo POST
+dedicado por ahora a la creacion de los usuarios con los datos que he dicho antes que espera que le mande el frontend
+guandandolo en mi base de datos.
+Ahora me he dado cuenta que tambien tendria que recoger los datos de cuando un usuario inicia sesion con google,
+porque de esta manera no introduce datos ninguno, y se salta el metodo, haciendo que no se guarden los datos en mi 
+base de datos, en este hago algo parecido, habiendo ya recogido el objeto usuario que me proporcionan, verifico 
+que este tenga los datos que necesito para crear el usuario, para evitar posibles errores, y hago basicamente un copia 
+y pega de lo que hice en el register, pero en este caso defino todos los valores(uid, email, nombre), mientras que en 
+el register, al tener el input con el correo y el nombre de usuario, tenia que definir el uid y recogerlo de las 
+credenciales que me daba firebase.
+
 
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).

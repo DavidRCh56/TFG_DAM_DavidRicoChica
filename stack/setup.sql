@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS productos (
 CREATE TABLE IF NOT EXISTS usuarios (
     uid_firebase VARCHAR(128) PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
-    nombre_usuario VARCHAR(100) NOT NULL,
+    nombre_usuario VARCHAR(100) NOT NULL UNIQUE,
     rol ENUM('cliente', 'moderador', 'admin') DEFAULT 'cliente',
     INDEX idx_uid_firebase (uid_firebase),
     INDEX idx_nombre_usuario (nombre_usuario)
