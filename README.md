@@ -316,6 +316,18 @@ y pega de lo que hice en el register, pero en este caso defino todos los valores
 el register, al tener el input con el correo y el nombre de usuario, tenia que definir el uid y recogerlo de las 
 credenciales que me daba firebase.
 
+He añadido index al email del usuario para poder buscarlo tambien por el email ya que tengo pensado que teniendo el 
+email, que puedo obtener desde firebase, lo busque en la base de datos, y de esta manera pueda relacionar un usuario
+con el rol que tenga asignado en mi base de datos, y ahora quiero crear una funcion logout que este en la pagina principal, 
+donde puse el boton, que cuando lo pulse, quite el token del navegador, te mande al login, y ademas que el token lo invalide 
+de manera que si se vuelve a intentar acceder a la pagina principal sin el token, no te deje y tambien, si intentas acceder 
+con un token que ha sido invalidado, que te de otro error, tambien voy a hacer el CRUD de recetas que es lo mas sencillo 
+por ahora, creo yo y ya vere como sigo con el progreso de la app.
+He pensado que en el CRUD de recetas, que puedas, directamente desde la creacion/edicion de recetas, buscar de 
+alguna manera los ingredientes en la tabla de productos, para que todo sea mas facil de manejar en un futuro, 
+ademas de implementar una funcion para subir imagenes o enlaces a fotos que eso ya no tengo ni idea de como lo 
+hare.
+
 
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).

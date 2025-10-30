@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nombre_usuario VARCHAR(100) NOT NULL UNIQUE,
     rol ENUM('cliente', 'moderador', 'admin') DEFAULT 'cliente',
     INDEX idx_uid_firebase (uid_firebase),
-    INDEX idx_nombre_usuario (nombre_usuario)
+    INDEX idx_nombre_usuario (nombre_usuario),
+    INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS recetas (
