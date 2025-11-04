@@ -17,7 +17,7 @@ import { Router } from '@angular/router';
 export class Register {
   email = '';
   password = '';
-  nombreUsuario = ''; // Nuevo campo
+  nombreUsuario = '';
   backendUrl = environment.backendUrl;
   mostrarContrasena = false;
 
@@ -43,7 +43,7 @@ export class Register {
           nombre_usuario: this.nombreUsuario
         })
       );
-
+      console.log('Se ha registrado ' + this.nombreUsuario + ' con email ' + this.email + ' y el uid ' + uid);
       alert('Registro exitoso');
       this.router.navigate(['/login']);
     } catch (error: any) {

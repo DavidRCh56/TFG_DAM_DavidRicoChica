@@ -1,0 +1,77 @@
+@startuml diagramaClases
+
+class Producto {
+    - Id: String
+    - Nombre: String
+    - Precio: Float
+    - Precio_Pack: Float
+    - Formato: String
+    - Categoria: String
+    - Supermercado: String
+    - Url: String
+    - Url_imagen: String
+    - Favorito: Boolean
+}
+
+class Usuario {
+    - uid_firebase: String
+    - email: String
+    - nombre_usuario: String
+    - rol: Rol
+}
+
+enum Rol {
+    cliente
+    moderador
+    admin
+}
+
+class Receta {
+    - id: Integer
+    - uid_firebase: String
+    - titulo: String
+    - descripcion: String
+    - ingredientes: String
+    - pasos: String
+    - Url_imagen: String
+}
+
+class RecetasFavoritas {
+    - uid_firebase: String
+    - receta_id: Integer
+}
+
+class Calendario {
+    - id: Integer
+    - uid_firebase: String
+    - fecha: Date
+    - desayuno: Integer
+    - comida: Integer
+    - cena: Integer
+}
+
+class ListasCompra {
+    - id: Integer
+    - uid_firebase: String
+    - id_producto: String
+    - cantidad: Integer
+}
+
+class HistorialBusquedas {
+    - id: Integer
+    - uid_firebase: String
+    - termino_busqueda: String
+}
+
+Usuario "1" -- "0..*" Receta : tiene >
+Usuario "1" -- "0..*" RecetasFavoritas : guarda >
+Receta "1" -- "0..*" RecetasFavoritas : favorito de >
+Usuario "1" -- "0..*" Calendario : planifica >
+Receta "0..1" -- "0..*" Calendario : se usa en >
+Usuario "1" -- "0..*" ListasCompra : genera >
+Producto "1" -- "0..*" ListasCompra : pertenece a >
+Usuario "1" -- "0..*" HistorialBusquedas : realiza >
+
+Usuario "1" --> Rol : "tiene rol"
+
+@enduml

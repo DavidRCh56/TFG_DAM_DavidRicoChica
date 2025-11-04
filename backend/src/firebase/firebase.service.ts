@@ -44,13 +44,11 @@ export class FirebaseService {
         );
       }
 
-      // Corrige el formato de los saltos de línea en la private key
       serviceAccount.private_key = serviceAccount.private_key.replace(
         /\\n/g,
         '\n',
       );
 
-      // Inicializa Firebase Admin
       this.app = admin.initializeApp({
         credential: admin.credential.cert({
           projectId: serviceAccount.project_id,
@@ -65,7 +63,6 @@ export class FirebaseService {
     }
   }
 
-  // Tipado explícito del retorno (Auth)
   getAuth(): admin.auth.Auth {
     return admin.auth(this.app);
   }

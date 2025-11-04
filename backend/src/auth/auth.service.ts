@@ -25,7 +25,6 @@ export class AuthService {
     const auth = this.firebaseService.getAuth();
     const decoded = await auth.verifyIdToken(token);
 
-    // Aquí podrías guardar el usuario en tu base de datos si lo deseas
     return {
       message: 'Usuario registrado correctamente',
       uid: decoded.uid,

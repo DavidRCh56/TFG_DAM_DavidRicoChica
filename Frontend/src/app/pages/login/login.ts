@@ -47,6 +47,7 @@ export class Login {
       );
 
       console.log('Respuesta backend:', response);
+      console.log('ha iniciado sesion con correo ' + this.email)
       alert('Inicio de sesión exitoso');
       this.loggedIn = true;
       this.mensajeScraper = '';
@@ -81,6 +82,7 @@ export class Login {
           nombre_usuario: nombre_usuario,
         })
       );
+      console.log(nombre_usuario + ' ha iniciado sesion con correo ' + email + ' y uid ' + uid);
 
       alert('Inicio de sesión con Google exitoso');
       this.loggedIn = true;

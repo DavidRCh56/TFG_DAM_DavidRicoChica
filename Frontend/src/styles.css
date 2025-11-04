@@ -1,9 +1,1 @@
 @import "tailwindcss";
-
-/* evitar el fondo blanco en los inputs autocompletados */
-input:-webkit-autofill,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:hover {
-  -webkit-box-shadow: 0 0 0 1000px #232a36 inset !important;
-  -webkit-text-fill-color: #fff !important;
-}

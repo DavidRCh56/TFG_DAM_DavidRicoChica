@@ -25,6 +25,7 @@ export class RecoverPassword {
       alert(
         'Se ha enviado un enlace de recuperación a tu correo electrónico. Revisa tu bandeja de entrada o spam.'
       );
+      console.log(this.email +  ' ha solicitado recuperar la contraseña.');
       this.router.navigate(['/login']);
     } catch (error) {
       console.error(error);

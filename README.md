@@ -328,6 +328,22 @@ alguna manera los ingredientes en la tabla de productos, para que todo sea mas f
 ademas de implementar una funcion para subir imagenes o enlaces a fotos que eso ya no tengo ni idea de como lo 
 hare.
 
+He estado pensando una manera de hacer que un usuario sin logear no pueda acceder a la pagina principal, y se me ha ocurrido
+añadir en la base de datos un valor asociado a cada usuario que default sea false, cuando se hace login se pone true y cuando
+se hace logout se pone false, y que en la pagina principal, haya un condicionarl que ocupe todo el codigo haciendo que si
+este valor booleano es false redirija al login o muestre un error al usuario y que si es true muestre lo que el usuario
+pueda ver dependiendo de su rol. Voy a mantener esta idea hasta que se me ocurra una mejor manera de hacerlo, ya que esta
+es una mala manera de manejar el estado de la sesion de un usuario, en caso de que no encuentre otra manera, lo haré asi.
+Para las recetas, quiero usar un componente card para no crear codigo repetido innecesariamente, y me estoy fijando en 
+componentes card ya hechos con tailwind para usarlo como base y modificarlo a corde como quiero que se vea al final.
+He modificado lo que llevo para que me mande un log cada vez que se registren inicien sesion o recuperen la contraseña 
+esto lo eliminare en un futuro, tambien he añadido a setup.sql el usuario base que tendré siempre en la app y un par de
+recetas para tenerlas como predefinidas.
+He empezado a hacer los archivos .puml y creo que ya tengo el diagrama de clases.
+He encontrado el codigo para un calendario que me ha gustado y usa tailwind en: https://pagedone.io/blocks/application/calendar
+Tambien se me ha ocurrido de poner una lista de productos favoritos, ya que el scraper que cogí ya me daba para ponerlos
+como favoritos o no.
+ademas he creado inserts para tener como base minimo un objeto para cada tabla.
 
 # TODO
 - Añadir protección de rutas en el backend (según rol de usuario).
