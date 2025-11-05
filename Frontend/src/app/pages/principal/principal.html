@@ -94,6 +94,32 @@
     <section *ngIf="recetas">
       <h2 class="text-xl mb-2">Recetas</h2>
       <p>Explora y guarda tus recetas favoritas.</p>
+      <div class="mt-10 flex flex-col items-start max-w-lg">
+        <label for="ia-input" class="mb-2 text-md">Pregunta a la IA:</label>
+        <div class="flex w-full">
+          <input
+            id="ia-input"
+            [(ngModel)]="preguntaIA"
+            (keydown.enter)="enviarPreguntaIA()"
+            class="flex-1 p-2 rounded-l border border-gray-400"
+            placeholder="Ej. Dame una receta con pollo"
+            [disabled]="cargandoIA"
+          />
+          <button
+            (click)="enviarPreguntaIA()"
+            class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 transition"
+            [disabled]="cargandoIA || !preguntaIA.trim()"
+          >
+            Enviar
+          </button>
+        </div>
+        <div *ngIf="cargandoIA" class="mt-2 text-gray-500 text-sm">Consultando IA...</div>
+        <div *ngIf="respuestaIA" class="mt-4 bg-gray-100 p-3 rounded shadow">
+          <b>Respuesta de la IA:</b>
+          <div class="whitespace-pre-line mt-2">{{ respuestaIA }}</div>
+        </div>
+        <div *ngIf="errorIA" class="mt-2 text-red-500 text-sm">{{ errorIA }}</div>
+      </div>
     </section>
     <section *ngIf="foroRecetas">
       <h2 class="text-xl mb-2">Foro de Recetas</h2>

@@ -345,26 +345,15 @@ Tambien se me ha ocurrido de poner una lista de productos favoritos, ya que el s
 como favoritos o no.
 ademas he creado inserts para tener como base minimo un objeto para cada tabla.
 
-# TODO
-- Añadir protección de rutas en el backend (según rol de usuario).
-- Implementar roles de usuario (cliente por defecto, moderador, admin).
-- Crear un usuario admin por defecto en la base de datos al iniciar el proyecto.
-- Permitir que un usuario cliente modifique sus propios datos (nombre, email, etc.).
-- Permitir que un admin modifique los datos de otros usuarios.
-- Implementar CRUD de recetas (crear, editar, eliminar, listar).
-- Implementar favoritos de recetas y sistema de búsqueda.
-- Implementar sección de recetas compartidas (todos los usuarios pueden ver/guardar).
-- Crear calendario de comidas (mensual, con slots: desayuno, comida, cena).
-- Generar lista de la compra automática basada en el calendario.
-- Implementar cálculo de presupuesto diario/semanal.
-- Integrar el scraper desde el backend (solo ejecutable por admin).
-- Conectar la base de datos MySQL/MariaDB con TypeORM y probar importación CSV.
-- Añadir notificaciones en tiempo real (Socket.IO) para cambios en la lista de la compra.(no seguro, tengo que ver)
-- Implementar histórico de presupuestos (consultar días y semanas anteriores).(no seguro, tengo que ver)
-- Añadir sistema de caché y cron jobs con Redis (actualizaciones automáticas).(no seguro, tengo que ver)
-- Contenerizar todo el stack (frontend, backend, scraper, DB, Redis) con Docker Compose.
-- Mejorar el diseño del frontend (Tailwind, componentes, UX).
-- Añadir autenticación federada (Google, Facebook) con Firebase.
-- Proteger el endpoint del scraper para que solo el admin lo pueda ejecutar.
-- Documentar todas las rutas del backend en Swagger o Postman.
-- Redactar la documentación final (README completo del proyecto + guía de despliegue).
+quiero actualizar la base de datos para que en la tabla de usuarios me admita fotos pero no se hacerlo
+
+Nos han propuesto que el proyecto que no podiamos hacer en n8n, lo hicieramos pero con n8n en local, es decir, 
+descargarnos nosotros n8n por nuestra cuenta y porbarlo, a mi ya me ha funcionado y he estado mirando y me ha dado una idea, crear
+como un "chat bot" que no llega a serlo, basicamente uso una peticion http post en el front para mandar una informacion a n8n,
+esta informacion la recoje n8n y se la manda a una IA, y esta ia me manda una respuesta que desde n8n la mando a mi front 
+para mostrarla, esta IA le he puesto un prompt poniendole un rol de dietista. Cada peticion me consume aprox. de 0.005€ a 0.008€ 
+usando la api de perplexity. he añadido la url que me proporciona webhook desde n8n en environment.
+
+## TODO
+- quiero actualizar la base de datos para que en la tabla de usuarios me admita fotos pero no se hacerlo
+- poner una lista de productos favoritos
