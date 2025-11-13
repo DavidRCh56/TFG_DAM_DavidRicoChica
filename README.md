@@ -353,6 +353,21 @@ como un "chat bot" que no llega a serlo, basicamente uso una peticion http post 
 esta informacion la recoje n8n y se la manda a una IA, y esta ia me manda una respuesta que desde n8n la mando a mi front 
 para mostrarla, esta IA le he puesto un prompt poniendole un rol de dietista. Cada peticion me consume aprox. de 0.005€ a 0.008€ 
 usando la api de perplexity. he añadido la url que me proporciona webhook desde n8n en environment.
+Me he puesto a investigar como hacer lo de los tokens, invalidarlos, pillar el uid y todo y he encontrado una pagina curiosa donde
+explican mas o menos todo y como hacerlo "https://dev.to/alpha018/integrating-firebase-authentication-into-nestjs-with-nestjs-firebase-auth-55m6"
+seguramente use de las opciones que da la pagina las opciones: "3. Extracción de usuarios a partir de tokens y reclamaciones" y 
+"4. Gestión de la revocación de tokens". 
+He añadido una cosa en el ligon para poder ver el token y hacer pruebas en el backend.
+
+He hecho el logout que revoca el token para que ya no se pueda usar después de cerrar sesión, para hacer esto, tuve que crear una interfaz llamada 
+RequestConUser dentro del controlador, esto es porque el objeto request que viene por defecto no tiene la propiedad user, que es 
+donde el guard de autenticación (FirebaseAuthGuard) guarda datos del usuario autenticado. Si intento acceder directamente a req.user.uid sin 
+esa interfaz, TypeScript da error porque no sabe que existe user en el request, la interfaz le dice a TypeScript que en realidad el 
+request tiene un campo user con ciertas propiedades, así el código puede usarlo sin errores, esto lo he hecho a recomendacion de las personas de la empresa,
+tambien he añadido un firebase-auth.gard, para la validacion del token, comprueba si es valido, lo guarda y los controladores gestionan este token, 
+tengo que hacer paraq que cada usuario tenga cosas individuales aprovechando esto, tambien he "protegido" la ruta /recetas y /usuarios/logout para 
+que se necesite token, pero lo dicho, tengo que hacer que muestre solo las recetas asociadas a ese token o nose algo asi.
+
 
 ## TODO
 - quiero actualizar la base de datos para que en la tabla de usuarios me admita fotos pero no se hacerlo

@@ -4,6 +4,7 @@ import { RecetasModule } from './recetas/recetas.module';
 import { AuthModule } from './auth/auth.module';
 import { ScraperModule } from './scraper/scraper.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     RecetasModule,
     AuthModule,
     ScraperModule,
+    FirebaseModule,
   ],
   controllers: [],
   providers: [],

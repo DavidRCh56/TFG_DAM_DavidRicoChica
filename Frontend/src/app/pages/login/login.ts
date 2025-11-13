@@ -66,6 +66,12 @@ export class Login {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+
+      //ESTO ES PARA PROBAR Y QUE DEVUELVA EL TOKEN DEL USUARIO LOGEADO
+      const userr = await getAuth().currentUser;
+      const token = userr ? await user.getIdToken() : null;
+      console.log(token);
+
       if (!user.email || !user.displayName) {
         alert('No se pudo obtener nombre o email de Google.');
         return;

@@ -6,11 +6,15 @@ import {
   Param,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { RecetasService } from './recetas.service';
 import { CreateRecetaDto } from './dto/create-receta.dto';
 import { UpdateRecetaDto } from './dto/update-receta.dto';
+import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 
+//todas las rutas protegidas deberian usar esto de useGuards
+@UseGuards(FirebaseAuthGuard)
 @Controller('recetas')
 export class RecetasController {
   constructor(private readonly recetasService: RecetasService) {}
