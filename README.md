@@ -368,6 +368,19 @@ tambien he añadido un firebase-auth.gard, para la validacion del token, comprue
 tengo que hacer paraq que cada usuario tenga cosas individuales aprovechando esto, tambien he "protegido" la ruta /recetas y /usuarios/logout para 
 que se necesite token, pero lo dicho, tengo que hacer que muestre solo las recetas asociadas a ese token o nose algo asi.
 
+He conectado el logout del back con el frontend, y me he dado cuenta que puedo acceder a la pagina principal sin token, eso no es lo ideal,
+por lo que en el html he puesto un ngif para que si la app no recoge ningun token, que no muestre nada de la pagina principal, y que muestre
+un "unauthorized page" que he sacado de aqui: "https://codepen.io/The-Anmol/pen/qBQQQLp?editors=1000", he puesto estta porque me ha resultado 
+graciosa y ademas usa tailwind, tambien le he añadido un boton para volver al login, este le he puesto otro ngif haciendo lo contrario que el 
+de antes, si tiene token no se muestra. Me estaba dando errores porque intentaba usar "getAuth().currentUser" y me lo devolvia como "nadie",
+por lo que me explotaba la app, me han dicho en la empresa de crear un archivo "datosCompartidos.service" para guardar ahi los datos que recivo del login
+y poder mandarlos a la pagina principal, pero lo he estado intentando y no conseguia hacerlo funcionar, por lo que me he decantado por guardar
+el token en  localStorage usando "localStorage.setItem('userToken', token);" para desde principal hacer de manera mucho mas sencilla la recogida
+del token usando "token = localStorage.getItem('userToken');" y en el logout, eliminarlo usando "localStorage.removeItem('userToken');"
+lo unico malo, es que si descubre alguien el nombre 'userToken' podria acceder al ponerlo en el local storage pero he creado unu metodo en el back
+para usarlo en el front, para comprobar que el token del localstorage es valido, por si alguien manipula el local storage, que no pueda hacer nada
+si el token no es valido. he creado otra variable booleana, para que usando un ngoninit, me diga si el token es valido o no y ya mostrar lo que 
+yo quiera dependiendo de si es true o false.
 
 ## TODO
 - quiero actualizar la base de datos para que en la tabla de usuarios me admita fotos pero no se hacerlo

@@ -51,6 +51,8 @@ export class Login {
       alert('Inicio de sesión exitoso');
       this.loggedIn = true;
       this.mensajeScraper = '';
+      // si el token no es null lo guardo en el local storage
+      localStorage.setItem('userToken', token);
       this.router.navigate(['/principal']);
 
     } catch (error: any) {
@@ -67,10 +69,14 @@ export class Login {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      //ESTO ES PARA PROBAR Y QUE DEVUELVA EL TOKEN DEL USUARIO LOGEADO
+      // ESTO ES PARA PROBAR Y QUE DEVUELVA EL TOKEN DEL USUARIO LOGEADO
       const userr = await getAuth().currentUser;
       const token = userr ? await user.getIdToken() : null;
       console.log(token);
+      // si el token no es null lo guardo en el local storage
+      if (token !== null) {
+        localStorage.setItem('userToken', token);
+      }
 
       if (!user.email || !user.displayName) {
         alert('No se pudo obtener nombre o email de Google.');

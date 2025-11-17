@@ -27,9 +27,11 @@ export class UsuariosService {
   async logout(uid: string): Promise<{ message: string }> {
     try {
       await this.firebaseService.getAuth().revokeRefreshTokens(uid);
-      //revocar el token es para que cuando se haga logout no se pueda utilizar el
-      //token de esa sesion
-      return { message: 'Tokens revocados, logout exitoso' };
+      // revocar el token es para que cuando se haga logout no se pueda utilizar el
+      // token de esa sesion
+      return {
+        message: 'Tokens revocados, logout exitoso',
+      };
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Error desconocido';

@@ -30,6 +30,17 @@ export class UsuariosController {
     return { success: true, usuario };
   }
 
+  @UseGuards(FirebaseAuthGuard)
+  @Post('verificacion-token')
+  verificarToken(@Req() req: RequestConUser) {
+    // si el guardia pasa, el token es válido y usuario está en req.user
+    return {
+      esValido: true,
+      uid: req.user.uid,
+      mensaje: 'Token válido',
+    };
+  }
+
   // @UseGuards con FirebaseAuthGuard indica que esta ruta '/usuarios/logout' está protegida:
   // solo usuarios autenticados pueden acceder, y el guard valida el token con Firebase
   // al pasar el guardia, el objeto decodificado del token es inyectado en req.user
