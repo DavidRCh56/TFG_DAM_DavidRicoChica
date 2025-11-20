@@ -88,11 +88,6 @@ CREATE TABLE IF NOT EXISTS historial_busquedas (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-INSERT INTO productos (Id, Nombre, Precio, Precio_Pack, Formato, Categoria, Supermercado, Url, Url_imagen)
-VALUES
-('10005', 'Chocolate líquido a la taza Hacendado', 1.80, NULL, '1L', 'Bebidas', 'Mercadona',
-'https://ejemplo.com/chocolate-hacendado', 'https://ejemplo.com/chocolate-hacendado.jpg');
-
 INSERT INTO usuarios (uid_firebase, email, nombre_usuario,rol)
 VALUES
 ('E3LfTyIO1sXMawkea9aeVyzoh9E3', 'davricchi@gmail.com', 'David Rico', 'admin');
@@ -117,9 +112,6 @@ INSERT INTO calendario (uid_firebase, fecha, desayuno, comida, cena)
 VALUES
 ('E3LfTyIO1sXMawkea9aeVyzoh9E3', '2025-11-04', 1, 1, 1);
 
-INSERT INTO listas_compra (uid_firebase, id_producto)
-VALUES
-('E3LfTyIO1sXMawkea9aeVyzoh9E3', '10005');
 
 INSERT INTO historial_busquedas (uid_firebase, termino_busqueda)
 VALUES

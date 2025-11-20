@@ -20,8 +20,8 @@ export class RecetasService {
     return this.recetaRepository.save(receta);
   }
 
-  findAll(): Promise<Receta[]> {
-    return this.recetaRepository.find();
+  findAll(uid_firebase: string): Promise<Receta[]> {
+    return this.recetaRepository.find({ where: { uid_firebase } });
   }
 
   async findOne(id: number): Promise<Receta> {

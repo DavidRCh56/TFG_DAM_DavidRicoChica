@@ -382,6 +382,11 @@ para usarlo en el front, para comprobar que el token del localstorage es valido,
 si el token no es valido. he creado otra variable booleana, para que usando un ngoninit, me diga si el token es valido o no y ya mostrar lo que 
 yo quiera dependiendo de si es true o false.
 
+He creado el crud de calendario, para luego implementarlo en el front, he eliminado el ejemplo que tenia en el setup.sql de la receta, porque al 
+tenerlo ahi, el scraper no me metia bien los datos en la base de datos, porque directamente no los metia, y me he decantado por eliminar ese ejemplo
+para solventar el problema, ademas he actualizado el recetas controller y service, para que me filtre los datos mostrados de recetas por usuario,
+añadiendo el uid del usuario como un query.
+
 ## TODO
 - quiero actualizar la base de datos para que en la tabla de usuarios me admita fotos pero no se hacerlo
 - poner una lista de productos favoritos

@@ -7,6 +7,7 @@ import {
   Patch,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { RecetasService } from './recetas.service';
 import { CreateRecetaDto } from './dto/create-receta.dto';
@@ -25,8 +26,8 @@ export class RecetasController {
   }
 
   @Get()
-  findAll() {
-    return this.recetasService.findAll();
+  findAll(@Query('uid_firebase') uid_firebase: string) {
+    return this.recetasService.findAll(uid_firebase);
   }
 
   @Get(':id')

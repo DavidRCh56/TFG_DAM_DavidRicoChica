@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ScraperModule } from './scraper/scraper.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FirebaseModule } from './firebase/firebase.module';
+import { CalendarioModule } from './calendario/calendario.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { FirebaseModule } from './firebase/firebase.module';
     AuthModule,
     ScraperModule,
     FirebaseModule,
+    CalendarioModule,
   ],
   controllers: [],
   providers: [],
