@@ -386,6 +386,22 @@ He creado el crud de calendario, para luego implementarlo en el front, he elimin
 tenerlo ahi, el scraper no me metia bien los datos en la base de datos, porque directamente no los metia, y me he decantado por eliminar ese ejemplo
 para solventar el problema, ademas he actualizado el recetas controller y service, para que me filtre los datos mostrados de recetas por usuario,
 añadiendo el uid del usuario como un query.
+Ahora que he creado el crud de calendario quiero intentar hacer el crud de la lista de la compra que recoge los datos de las recetas que hay
+en calendario, devolviendo los ingredientes de la receta, estos los busco en productos y recojo el nombre y el precio de cada producto que hay
+y lo añado a la lista, con un buscador para añadir mas productos y poder tambien eliminarlos, esto me gustaria hacerlo filtrando por Supermercado
+para que haya dos listas y veas cual es el que mas rentable te sale.
+
+Estaba intentando hacer un listado de productos que muestre todos los productos de mi base de datos y cuando he intentado ejecutar el scraper me ha dado
+un error sin que yo haya tocado nada del mismo, ahora me voy a c¡poner a ver que error esta dando centrandome solo en el scraper, porque sin el no puedo 
+probar si funciona lo que estaba haciendo. A lo visto han cambiado algo en la API del dia y he tenido que poner una comprobacion, puesto que hay
+rutas que intenta recoger unos datos que ahora no existen aunque antes si, lo comprobacion hace que si la respuesta HTTP es correcta (status_code == 200), 
+pero el texto está vacío, no intento convertirlo en JSON y simplemente salto esa categoría.
+Ya me muestra todos los productos de mi base de datos con un filtro por supermercado ademas de un buscador, en el que uso like para encontrar resultados
+parecidos sin la necesidad de tener que poner el nombre completo, que tambien funciona el filtro, para buscar productos que necesites y añadirlos a la 
+lista de la compra(todavia no implementado, es la idea).
+Tambien he creado un metodo para encontrar usuarios por uid y para recoger el rol, para poder filtrar lo que ve cada rol.
+Me falta hacer que en el resumen semanal se muestren las recetas de esa semana y algo mas. hago commit push para guardar los datos.
+
 
 ## TODO
 - quiero actualizar la base de datos para que en la tabla de usuarios me admita fotos pero no se hacerlo

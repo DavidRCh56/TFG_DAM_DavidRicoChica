@@ -25,6 +25,16 @@
         Mi Calendario
       </button>
       <button
+        (click)="setActiveSection('produtos')"
+        [ngClass]="{
+          'bg-gray-300': produtos,
+          'hover:bg-gray-200': !produtos
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Productos
+      </button>
+      <button
         (click)="setActiveSection('listaCompra')"
         [ngClass]="{
           'bg-gray-300': listaCompra,
@@ -56,18 +66,20 @@
       </button>
 
       <div class="mt-auto w-full">
-        <button
-          (click)="ejecutarScraper()"
-          [disabled]="ejecutando"
-          class="w-full mb-2 bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition"
-        >
-          {{ ejecutando ? 'Actualizando precios...' : 'Actualizar precios' }}
-        </button>
-
-        <div *ngIf="mensajeScraper" class="text-center mt-2 text-sm text-gray-700">
-          {{ mensajeScraper }}
+        <!-- boton solo accesible para administradores -->
+        <div *ngIf="userRole === 'admin'">
+          <button
+            (click)="ejecutarScraper()"
+            [disabled]="ejecutando"
+            class="w-full mb-2 bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition"
+          >
+            {{ ejecutando ? 'Actualizando precios...' : 'Actualizar precios' }}
+          </button>
+  
+          <div *ngIf="mensajeScraper" class="text-center mt-2 text-sm text-gray-700">
+            {{ mensajeScraper }}
+          </div>
         </div>
-
         <button
           (click)="logout()"
           class="w-full p-2 bg-gray-500 text-white rounded hover:bg-gray-400 transition mt-2"
@@ -82,10 +94,170 @@
     <section *ngIf="resumenSemanal">
       <h2 class="text-xl mb-2">Resumen Semanal</h2>
       <p>Este es tu resumen semanal con las principales actividades y estadísticas.</p>
+      <div class="max-w-5xl mx-auto mt-10 bg-white rounded-xl shadow">
+        <div class="px-6 py-4 flex items-center justify-between border-b">
+          <h5 class="text-xl font-semibold text-gray-900 capitalize">{{ mesActual }}</h5>
+          <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">{{ anoActual }}</button>
+        </div>
+        <div class="grid grid-cols-7 text-center text-gray-500 font-semibold py-2 border-b">
+          <div *ngFor="let dia of diasSemana">{{ dia.nombre }}</div>
+        </div>
+        <div class="grid grid-cols-7 divide-x divide-gray-200">
+          <div *ngFor="let dia of diasSemana"
+              class="relative py-6 px-2 border-b border-r border-gray-200 cursor-pointer hover:bg-gray-100 transition rounded-lg">
+            <div class="absolute top-2 left-2 w-8 h-8 rounded-full bg-gray-700 text-white text-xs flex items-center justify-center font-bold text-base border-2"
+                [ngClass]="{
+                  'bg-blue-600 text-white border-white': dia.esHoy,
+                  'bg-gray-700 text-gray-100 border-gray-300': !dia.esHoy
+                }">
+              {{ dia.numero }}
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
     <section *ngIf="miCalendario">
-      <h2 class="text-xl mb-2">Mi Calendario</h2>
-      <p>Consulta y gestiona tus eventos y citas programadas.</p>
+      <h2 class="text-xl font-bold mb-1">Mi Calendario</h2>
+      <div class="max-w-5xl mx-auto mt-6 bg-white rounded-xl shadow">
+        <div class="px-6 py-4 flex items-center justify-between border-b">
+          <div class="flex items-center gap-4">
+            <button (click)="mesAnterior()" class="p-2 rounded-full hover:bg-gray-100" aria-label="Mes anterior">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h5 class="text-xl font-semibold text-gray-900 capitalize tracking-wide">{{ mesesES[mesActivo] }}</h5>
+            <button (click)="mesSiguiente()" class="p-2 rounded-full hover:bg-gray-100" aria-label="Mes siguiente">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <button (click)="calcularDiasDelMes(anoActivo, mesActivo)" 
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+            {{ anoActivo }}
+          </button>
+        </div>
+
+        <div class="grid grid-cols-7 text-center text-gray-500 font-semibold py-3 border-b bg-gray-50">
+          <div *ngFor="let dia of diasSemanaNombres" class="uppercase tracking-wide">{{ dia }}</div>
+        </div>
+
+        <div class="grid grid-cols-7 gap-px bg-gray-100">
+          <ng-container *ngFor="let dia of diasDelMesArray">
+            <div *ngIf="dia.numero === 0"
+                class="bg-gray-100 border-b border-r min-h-[120px]"></div>
+            <div *ngIf="dia.numero > 0"
+                class="relative bg-white border-b border-r min-h-[180px] flex flex-col items-stretch px-2 py-3 rounded transition
+                      hover:shadow-md group"
+                [ngClass]="{
+                  'bg-blue-600 shadow-lg ring-2 ring-blue-600 text-white': dia.esHoy
+                }">
+              <div class="absolute top-2 left-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-base
+                          border-2"
+                  [ngClass]="{
+                    'bg-blue-600 text-white border-white': dia.esHoy,
+                    'bg-gray-200 text-gray-700 border-gray-300': !dia.esHoy
+                  }">
+                {{ dia.numero }}
+              </div>
+              <div class="flex flex-col gap-3 mt-12">
+                <ng-container *ngFor="let tipo of tiposComida">
+                  <select
+                    class="w-full text-base p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 font-medium"
+                    [ngModel]="seleccionesRecetasPorDia[anoActivo + '-' + (mesActivo + 1).toString().padStart(2, '0') + '-' + dia.numero.toString().padStart(2, '0')]?.[tipo]"
+                    (ngModelChange)="cambiarSeleccion(anoActivo + '-' + (mesActivo + 1).toString().padStart(2, '0') + '-' + dia.numero.toString().padStart(2, '0'), tipo, $event)"
+                  >
+                    <option [value]="0" disabled>Selecciona {{ tipo }}</option>
+                    <option *ngFor="let receta of recetasDisponibles" [value]="receta.id">
+                      {{ receta.titulo }}
+                    </option>
+                  </select>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <button
+        (click)="guardarTodoCalendario()"
+        class="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition w-full max-w-xl mx-auto items-center flex justify-center"
+      >
+        Guardar calendario
+      </button>
+    </section>
+    <section *ngIf="produtos">
+      <h2 class="text-2xl font-bold mb-2">Productos</h2>
+      <p class="mb-6 text-gray-700">Artículos de los supermercados.</p>
+      <div class="flex flex-col sm:flex-row sm:items-end gap-6 mt-6 mb-8 max-w-2xl">
+        <div class="flex flex-col flex-grow">
+          <label class="block mb-1 text-sm font-medium">Buscar producto:</label>
+          <div class="flex w-full">
+            <input type="text" [(ngModel)]="buscador" (keydown.enter)="buscarProductos()"
+                  class="border-r-0 rounded-l-lg border p-2 focus:outline-none flex-grow text-base"
+                  placeholder="Buscar producto..." />
+            <button (click)="buscarProductos()"
+                    class="bg-blue-600 text-white px-4 rounded-r-lg hover:bg-blue-700 font-semibold text-base">Buscar</button>
+          </div>
+        </div>
+        <div class="flex flex-col min-w-[150px]">
+          <label class="block mb-1 text-sm font-medium">Filtrar por supermercado:</label>
+          <select [(ngModel)]="supermercado" class="border rounded-lg p-2 font-semibold text-base" (change)="buscarProductos()">
+            <option value="">Todos</option>
+            <option *ngFor="let s of supermercadosLista" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+      </div>
+      <div *ngIf="buscador.trim()">
+        <div *ngIf="resultadosBuscador.length"
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+          <div *ngFor="let prod of resultadosBuscador"
+              class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
+            <img
+              [src]="prod.Url_imagen || noDisponibleImg"
+              alt="Foto producto"
+              class="mb-4 w-24 h-24 object-contain rounded shadow"
+            >
+            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
+            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
+            <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
+            <button (click)="anadirProductoManual(prod)"
+                    class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
+              Añadir
+            </button>
+          </div>
+        </div>
+        <div *ngIf="!resultadosBuscador.length"
+            class="mt-6 text-gray-400 font-medium text-center">
+          No se encontraron productos para "{{ buscador }}" en {{ supermercado || 'ningún supermercado' }}.
+        </div>
+      </div>
+      <div *ngIf="!buscador.trim()">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+          <div *ngFor="let prod of todosProductos.slice((paginaActiva-1)*productosPorPagina, paginaActiva*productosPorPagina)"
+              class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
+            <img
+              [src]="prod.Url_imagen || noDisponibleImg"
+              alt="Foto producto"
+              class="mb-4 w-24 h-24 object-contain rounded shadow"
+            >
+            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
+            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
+            <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
+            <button (click)="anadirProductoManual(prod)"
+                    class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
+              Añadir
+            </button>
+          </div>
+        </div>
+        <div class="flex justify-center gap-2 mt-10">
+          <button (click)="irAnterior()" [disabled]="paginaActiva === 1">Anterior</button>
+          <span class="px-4 py-2 bg-gray-100 rounded font-medium">
+            Página {{ paginaActiva }} de {{ totalPaginas }}
+          </span>
+          <button (click)="irSiguiente()" [disabled]="paginaActiva === totalPaginas">Siguiente</button>
+        </div>
+      </div>
     </section>
     <section *ngIf="listaCompra">
       <h2 class="text-xl mb-2">Lista de la compra</h2>

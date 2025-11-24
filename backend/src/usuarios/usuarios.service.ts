@@ -38,4 +38,8 @@ export class UsuariosService {
       throw new BadRequestException('Error al revocar tokens: ' + message);
     }
   }
+
+  async findByUid(uid: string): Promise<Usuario | null> {
+    return this.usuarioRepository.findOne({ where: { uid_firebase: uid } });
+  }
 }

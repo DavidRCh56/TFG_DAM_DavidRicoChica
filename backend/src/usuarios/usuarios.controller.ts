@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
@@ -50,5 +50,15 @@ export class UsuariosController {
     // extraemos user del request de la interfaz que he creado
     // usamos el uid para llamar al servicio que revoca el token (logout)
     return this.usuariosService.logout(req.user.uid);
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Get('rol')
+  async getRole(@Req() req: RequestConUser) {
+    const user = await this.usuariosService.findByUid(req.user.uid);
+    if (!user) {
+      return { rol: null, mensaje: 'Usuario no encontrado' };
+    }
+    return { rol: user.rol };
   }
 }

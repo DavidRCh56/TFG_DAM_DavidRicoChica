@@ -71,7 +71,11 @@ def get_products_by_category_dia(list_categories, ruta):
 
         #Obtener los productos de la categoria
         list_products_data = requests.get(url, headers=HEADERS_REQUEST_DIA)
-        list_products = list_products_data.json()
+        if list_products_data.status_code == 200 and list_products_data.text.strip():
+            list_products = list_products_data.json()
+        else:
+            print(f"Error al obtener datos categoría {stringCategoria}: Código {list_products_data.status_code}")
+            continue
             
         try:
             df_productos = pd.json_normalize(list_products["plp_items"], sep="_")

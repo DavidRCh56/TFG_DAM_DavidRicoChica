@@ -6,6 +6,8 @@ import { ScraperModule } from './scraper/scraper.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FirebaseModule } from './firebase/firebase.module';
 import { CalendarioModule } from './calendario/calendario.module';
+import { ListaCompraModule } from './listas_compra/listas_compra.module';
+import { ProductosModule } from './productos/productos.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { CalendarioModule } from './calendario/calendario.module';
     ScraperModule,
     FirebaseModule,
     CalendarioModule,
+    ListaCompraModule,
+    ProductosModule,
   ],
   controllers: [],
   providers: [],
