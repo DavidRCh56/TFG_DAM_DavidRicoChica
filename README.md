@@ -406,3 +406,8 @@ he estado haciendo el proyecto de manera desorganizada, me he hecho una hoja con
 intentare seguir un orden para no estar saltando entre un lado y otro.
 De momento he modificado mi base de datos para que me acepte un enlace para foto de usuario y los valores booleanos para que una receta
 sea predeterminada o este compartida en el foro.
+para actualizar y borrar usuarios,he consultado la documentacion de firebase: 
+https://firebase.google.com/docs/auth/admin/manage-users?hl=es-419#update_a_user,
+https://firebase.google.com/docs/auth/admin/manage-users?hl=es-419#delete_a_user
+Ya he creado el update y el delete a tener en cuenta, que si se modifica el correo o la contraseña, firebase automaticamente revoca el token, por lo que 
+se debe de volver a iniciar sesion.

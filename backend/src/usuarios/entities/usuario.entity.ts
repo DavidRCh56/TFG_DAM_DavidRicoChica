@@ -13,8 +13,11 @@ export class Usuario {
 
   @Column({
     type: 'enum',
-    enum: ['cliente', 'moderador', 'admin'],
+    enum: ['cliente', 'admin'],
     default: 'cliente',
   })
-  rol: 'cliente' | 'moderador' | 'admin';
+  rol: 'cliente' | 'admin';
+
+  @Column({ type: 'text', nullable: true })
+  foto_url?: string;
 }

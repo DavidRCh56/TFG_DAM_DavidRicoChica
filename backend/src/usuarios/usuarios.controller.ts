@@ -1,6 +1,16 @@
-import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import type { Request } from 'express';
 
@@ -60,5 +70,20 @@ export class UsuariosController {
       return { rol: null, mensaje: 'Usuario no encontrado' };
     }
     return { rol: user.rol };
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Patch()
+  async update(
+    @Req() req: RequestConUser,
+    @Body() updateUsuarioDto: UpdateUsuarioDto & { password?: string },
+  ) {
+    return this.usuariosService.update(req.user.uid, updateUsuarioDto);
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Delete()
+  async remove(@Req() req: RequestConUser) {
+    return this.usuariosService.remove(req.user.uid);
   }
 }
