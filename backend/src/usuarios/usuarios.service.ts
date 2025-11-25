@@ -92,4 +92,42 @@ export class UsuariosService {
   async findByUid(uid: string): Promise<Usuario | null> {
     return this.usuarioRepository.findOne({ where: { uid_firebase: uid } });
   }
+
+  async findAll(): Promise<Usuario[]> {
+    return this.usuarioRepository.find();
+  }
+
+  async updateAdmin(
+    uid: string,
+    updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<Usuario> {
+    const usuario = await this.usuarioRepository.findOneBy({
+      uid_firebase: uid,
+    });
+    if (!usuario) throw new NotFoundException('Usuario no encontrado');
+
+    try {
+      await this.firebaseService.getAuth().updateUser(uid, {
+        email: updateUsuarioDto.email,
+        displayName: updateUsuarioDto.nombre_usuario,
+        photoURL: updateUsuarioDto.foto_url,
+      });
+
+      if (updateUsuarioDto.rol) {
+        usuario.rol = updateUsuarioDto.rol;
+      }
+
+      Object.assign(usuario, {
+        email: updateUsuarioDto.email,
+        nombre_usuario: updateUsuarioDto.nombre_usuario,
+        foto_url: updateUsuarioDto.foto_url,
+      });
+
+      return await this.usuarioRepository.save(usuario);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error desconocido';
+      throw new BadRequestException('Error al actualizar usuario: ' + message);
+    }
+  }
 }

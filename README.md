@@ -411,3 +411,6 @@ https://firebase.google.com/docs/auth/admin/manage-users?hl=es-419#update_a_user
 https://firebase.google.com/docs/auth/admin/manage-users?hl=es-419#delete_a_user
 Ya he creado el update y el delete a tener en cuenta, que si se modifica el correo o la contraseña, firebase automaticamente revoca el token, por lo que 
 se debe de volver a iniciar sesion.
+
+ahora estoy haciendo para que un usuario administrador pueda eliminar o editar otros usuarios, excluyendo la contraseña de usuarios que no sean el suyo,
+tambien puede cambiar el rol de los demas usuarios.

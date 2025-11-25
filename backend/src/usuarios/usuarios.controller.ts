@@ -7,6 +7,8 @@ import {
   UseGuards,
   Patch,
   Delete,
+  ForbiddenException,
+  Param,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -26,6 +28,8 @@ import type { Request } from 'express';
 interface RequestConUser extends Request {
   user: {
     uid: string;
+    email?: string;
+    rol?: string;
     [key: string]: any;
   };
 }
@@ -62,6 +66,15 @@ export class UsuariosController {
     return this.usuariosService.logout(req.user.uid);
   }
 
+  //este es para usarlo en metodos del back
+  @UseGuards(FirebaseAuthGuard)
+  private async getUserRole(req: RequestConUser): Promise<string> {
+    if (req.user.rol) return req.user.rol;
+    const usuario = await this.usuariosService.findByUid(req.user.uid);
+    return usuario?.rol || 'cliente';
+  }
+
+  //este es para mandarlo al front
   @UseGuards(FirebaseAuthGuard)
   @Get('rol')
   async getRole(@Req() req: RequestConUser) {
@@ -73,17 +86,43 @@ export class UsuariosController {
   }
 
   @UseGuards(FirebaseAuthGuard)
-  @Patch()
+  @Patch(':uid')
   async update(
     @Req() req: RequestConUser,
+    @Param('uid') uid: string,
     @Body() updateUsuarioDto: UpdateUsuarioDto & { password?: string },
   ) {
-    return this.usuariosService.update(req.user.uid, updateUsuarioDto);
+    const rol = await this.getUserRole(req);
+    if (rol === 'admin') {
+      if (updateUsuarioDto.password) {
+        throw new ForbiddenException(
+          'Admin no puede cambiar la contraseña de otros usuarios',
+        );
+      }
+      return this.usuariosService.updateAdmin(uid, updateUsuarioDto);
+    } else {
+      if (uid !== req.user.uid) throw new ForbiddenException('No autorizado');
+      return this.usuariosService.update(uid, updateUsuarioDto);
+    }
   }
 
   @UseGuards(FirebaseAuthGuard)
-  @Delete()
-  async remove(@Req() req: RequestConUser) {
-    return this.usuariosService.remove(req.user.uid);
+  @Get()
+  async findAll(@Req() req: RequestConUser) {
+    const rol = await this.getUserRole(req);
+    if (rol !== 'admin') throw new ForbiddenException('Acceso denegado');
+    return this.usuariosService.findAll();
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Delete(':uid')
+  async remove(@Req() req: RequestConUser, @Param('uid') uid: string) {
+    const rol = await this.getUserRole(req);
+    if (rol === 'admin') {
+      return this.usuariosService.remove(uid);
+    } else {
+      if (uid !== req.user.uid) throw new ForbiddenException('No autorizado');
+      return this.usuariosService.remove(uid);
+    }
   }
 }
