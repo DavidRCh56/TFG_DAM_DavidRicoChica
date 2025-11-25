@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     uid_firebase VARCHAR(128) PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     nombre_usuario VARCHAR(100) NOT NULL UNIQUE,
-    rol ENUM('cliente', 'moderador', 'admin') DEFAULT 'cliente',
+    rol ENUM('cliente', 'admin') DEFAULT 'cliente',
+    foto_url TEXT,
     INDEX idx_uid_firebase (uid_firebase),
     INDEX idx_nombre_usuario (nombre_usuario),
     INDEX idx_email (email)
@@ -35,6 +36,8 @@ CREATE TABLE IF NOT EXISTS recetas (
     ingredientes TEXT,
     pasos TEXT,
     Url_imagen TEXT,
+    predeterminada BOOLEAN DEFAULT FALSE,
+    compartida BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (uid_firebase) REFERENCES usuarios(uid_firebase),
     INDEX idx_id_receta (id),
     INDEX idx_uid_firebase (uid_firebase),
@@ -88,21 +91,22 @@ CREATE TABLE IF NOT EXISTS historial_busquedas (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-INSERT INTO usuarios (uid_firebase, email, nombre_usuario,rol)
+INSERT INTO usuarios (uid_firebase, email, nombre_usuario,rol, foto_url)
 VALUES
-('E3LfTyIO1sXMawkea9aeVyzoh9E3', 'davricchi@gmail.com', 'David Rico', 'admin');
+('E3LfTyIO1sXMawkea9aeVyzoh9E3', 'davricchi@gmail.com', 'David Rico', 'admin', 'https://i.pinimg.com/736x/e7/70/51/e77051136cf95616fcb83bbd3f338c93.jpg');
 
-INSERT INTO recetas (uid_firebase, titulo, descripcion, ingredientes, pasos, Url_imagen)
+INSERT INTO recetas (uid_firebase, titulo, descripcion, ingredientes, pasos, Url_imagen, predeterminada, compartida)
 VALUES
 ('E3LfTyIO1sXMawkea9aeVyzoh9E3', 'Ensalada César', 'Ensalada con pollo y croutons',
 '[{"idProducto":"5237","nombre":"Lechuga Batavia","cantidad":"200","unidad":"g"}, {"idProducto":"7413","nombre":"Pechuga de Pollo Cocida","cantidad":"150","unidad":"g"}, {"idProducto":"8504","nombre":"Picatostes Tradicionales","cantidad":"50","unidad":"g"}, {"idProducto":"9305","nombre":"Queso Parmesano Rallado","cantidad":"30","unidad":"g"}, {"idProducto":"10117","nombre":"Salsa César","cantidad":"50","unidad":"ml"}]',
 '1. Lavar y picar la lechuga batavia.\n2. Añadir la pechuga de pollo troceada.\n3. Añadir picatostes tradicionales y queso parmesano rallado.\n4. Añadir la salsa César y mezclar.\n5. Servir fría.',
-'https://ia600406.us.archive.org/33/items/nano-banana-2025-11-03T11-20-49/nano-banana-2025-11-03T10-59-43-ensalada-cesar.png'),
-
+'https://ia600406.us.archive.org/33/items/nano-banana-2025-11-03T11-20-49/nano-banana-2025-11-03T10-59-43-ensalada-cesar.png',
+true, true),
 ('E3LfTyIO1sXMawkea9aeVyzoh9E3', 'Tortilla de patatas', 'Tortilla tradicional española',
 '[{"idProducto":"6432","nombre":"Patata Larga Nacional","cantidad":"300","unidad":"g"}, {"idProducto":"6112","nombre":"Huevo L de Caserío","cantidad":"4","unidad":"uds"}, {"idProducto":"7120","nombre":"Cebolla blanca","cantidad":"100","unidad":"g"}, {"idProducto":"5337","nombre":"Aceite de Oliva Hacendado","cantidad":"50","unidad":"ml"}, {"idProducto":"9999","nombre":"Sal","cantidad":"al gusto","unidad":""}]',
 '1. Pelar y cortar las patatas en rodajas finas.\n2. Cortar la cebolla en juliana.\n3. Freír patatas y cebolla en aceite de oliva hasta que estén tiernas.\n4. Batir los huevos y mezclar con patatas y cebolla.\n5. Verter la mezcla en la sartén y cocinar a fuego medio.\n6. Dar la vuelta a la tortilla y cocinar hasta que esté dorada.\n7. Añadir sal al gusto.\n8. Servir caliente.',
-'https://archive.org/download/nano-banana-2025-11-03T11-20-49/nano-banana-2025-11-03T11-20-49.png');
+'https://archive.org/download/nano-banana-2025-11-03T11-20-49/nano-banana-2025-11-03T11-20-49.png',
+true, true);
 
 INSERT INTO recetas_favoritas (uid_firebase, receta_id)
 VALUES

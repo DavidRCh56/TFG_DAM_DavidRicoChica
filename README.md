@@ -404,3 +404,5 @@ ahora he creado en el backend, el "CRUD" de recetas favoritas, puedo añadir una
 
 he estado haciendo el proyecto de manera desorganizada, me he hecho una hoja con lo que tengo y lo que falta de todo el proyecto, asique a partir de ahora
 intentare seguir un orden para no estar saltando entre un lado y otro.
+De momento he modificado mi base de datos para que me acepte un enlace para foto de usuario y los valores booleanos para que una receta
+sea predeterminada o este compartida en el foro.
