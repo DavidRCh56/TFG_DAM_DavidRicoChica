@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FirebaseModule } from './firebase/firebase.module';
 import { CalendarioModule } from './calendario/calendario.module';
 import { ProductosModule } from './productos/productos.module';
+import { RecetasFavoritasModule } from './recetas copy/recetasFavoritas.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProductosModule } from './productos/productos.module';
     FirebaseModule,
     CalendarioModule,
     ProductosModule,
+    RecetasFavoritasModule,
   ],
   controllers: [],
   providers: [],

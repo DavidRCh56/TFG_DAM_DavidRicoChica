@@ -402,6 +402,10 @@ lista de la compra(todavia no implementado, es la idea).
 Tambien he creado un metodo para encontrar usuarios por uid y para recoger el rol, para poder filtrar lo que ve cada rol.
 Me falta hacer que en el resumen semanal se muestren las recetas de esa semana y algo mas. hago commit push para guardar los datos.
 
+ahora he creado en el backend, el "CRUD" de recetas favoritas, puedo añadir una receta a un usuario ver las recetas favoritas o eliminarla de favoritas.
+
+
+
 
 ## TODO
 - quiero actualizar la base de datos para que en la tabla de usuarios me admita fotos pero no se hacerlo
