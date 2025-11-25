@@ -221,7 +221,7 @@
             <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
             <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
             <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
-            <button (click)="anadirProductoManual(prod)"
+            <button (click)="alert('No implementado')"
                     class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
               Añadir
             </button>
@@ -230,25 +230,6 @@
         <div *ngIf="!resultadosBuscador.length"
             class="mt-6 text-gray-400 font-medium text-center">
           No se encontraron productos para "{{ buscador }}" en {{ supermercado || 'ningún supermercado' }}.
-        </div>
-      </div>
-      <div *ngIf="!buscador.trim()">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
-          <div *ngFor="let prod of todosProductos.slice((paginaActiva-1)*productosPorPagina, paginaActiva*productosPorPagina)"
-              class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
-            <img
-              [src]="prod.Url_imagen || noDisponibleImg"
-              alt="Foto producto"
-              class="mb-4 w-24 h-24 object-contain rounded shadow"
-            >
-            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
-            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
-            <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
-            <button (click)="anadirProductoManual(prod)"
-                    class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
-              Añadir
-            </button>
-          </div>
         </div>
         <div class="flex justify-center gap-2 mt-10">
           <button (click)="irAnterior()" [disabled]="paginaActiva === 1">Anterior</button>

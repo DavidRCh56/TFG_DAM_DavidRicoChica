@@ -92,9 +92,6 @@ export class Principal implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-    if (this.listaCompra) {
-      await this.cargarListaCompra();
-    }
 
     const res = await this.getUserRoleAsync();
     this.userRole = res.rol;
@@ -397,24 +394,6 @@ export class Principal implements OnInit {
     }
   }
 
-  async cargarListaCompra() {
-    this.cargandoLista = true;
-    try {
-      this.listaCompraDatos = await firstValueFrom(this.http.get<any[]>(
-        `${this.backendUrl}/lista-compra/semana`, {
-          params: {
-            uid_firebase: this.uid_firebase,
-            fecha: this.fechaActual,
-            ...(this.supermercado ? { supermercado: this.supermercado } : {})
-          },
-          headers: { Authorization: `Bearer ${this.token}` }
-        }
-      ));
-    } finally {
-      this.cargandoLista = false;
-    }
-  }
-
   async buscarProductos() {
     if (!this.buscador.trim()) {
       this.resultadosBuscador = [];
@@ -430,30 +409,6 @@ export class Principal implements OnInit {
         headers: { Authorization: `Bearer ${this.token}` }
       }
     ));
-  }
-
-  async anadirProductoManual(prod: any) {
-    await firstValueFrom(this.http.post(
-      `${this.backendUrl}/lista-compra/manual`,
-      { uid_firebase: this.uid_firebase, id_producto: prod.Id, cantidad: 1 },
-      { headers: { Authorization: `Bearer ${this.token}` } }
-    ));
-    this.resultadosBuscador = [];
-    this.buscador = '';
-    await this.cargarListaCompra();
-  }
-
-  async eliminarProductoManual(producto: any) {
-    await firstValueFrom(this.http.delete(
-      `${this.backendUrl}/lista-compra/manual`, {
-        params: {
-          uid_firebase: this.uid_firebase,
-          id_producto: producto.id_producto
-        },
-        headers: { Authorization: `Bearer ${this.token}` }
-      }
-    ));
-    await this.cargarListaCompra();
   }
 
   //utilidad para filtro de supermercados

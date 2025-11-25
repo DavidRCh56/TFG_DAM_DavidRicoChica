@@ -20,9 +20,7 @@ productos disponibles y sus precios).
 - Frontend: Angular + Tailwind CSS
 - Backend: NestJS (TypeORM, Passport.js, JWT, OAuth2)
 - Scraper: Python
-- WebSockets: Socket.IO (tengo que investigar como hacerlo)
-- Base de datos: MySQL/MariaDB (TypeORM, migraciones, semillas), seguramente use MySQL si se me complica con MariaDB
-- Caché y Cron: Redis (jobs diarios) (tengo que investigar como hacerlo)
+- Base de datos: MySQL (TypeORM, migraciones, semillas), seguramente use MySQL si se me complica con MariaDB
 - Contenerización: Docker + Docker Compose
 - Autenticación: firebase
 
@@ -30,18 +28,18 @@ productos disponibles y sus precios).
 
 ## Roles y Permisos
 
-| Acción                        | Usuario | Moderador                | Admin   |
-|-------------------------------|:-------:|:------------------------:|:-------:|
-| CRUD recetas propias           | ✔️    | ✔️                        | ✔️      |
-| CRUD recetas predefinidas      | ❌    | ✔️                        | ✔️      |
-| Editar recetas de usuarios     | ❌    | ✔️                        | ✔️      |
-| CRUD Calendario propio         | ✔️    | ✔️                        | ✔️      |
-| Editar calendarios ajenos      | ❌    | ❌                        | ✔️      |
-| Gestión usuarios y roles       | ❌    | ❌                        | ✔️      |
-| Gestión lista de la compra     | ✔️    | ✔️ (solo lectura)         | ✔️      |
-| Apartado para compartir recetas| ✔️    | ✔️                        | ✔️      |
-| Eliminar recetas compartidas   | ❌    | ✔️                        | ✔️      |
-| Eliminar TU receta compartida  | ✔️    | ✔️                        | ✔️      |
+| Acción                        | Usuario | Admin   |
+|-------------------------------|:-------:|:-------:|
+| CRUD recetas propias           | ✔️    | ✔️      |
+| CRUD recetas predefinidas      | ❌    | ✔️      |
+| Editar recetas de usuarios     | ❌    | ✔️      |
+| CRUD Calendario propio         | ✔️    | ✔️      |
+| Editar calendarios ajenos      | ❌    | ✔️      |
+| Gestión usuarios y roles       | ❌    | ✔️      |
+| Gestión lista de la compra     | ✔️    | ✔️      |
+| Apartado para compartir recetas| ✔️    | ✔️      |
+| Eliminar recetas compartidas   | ❌    | ✔️      |
+| Eliminar TU receta compartida  | ✔️    | ✔️      |
 
 ---
 
@@ -404,9 +402,5 @@ Me falta hacer que en el resumen semanal se muestren las recetas de esa semana y
 
 ahora he creado en el backend, el "CRUD" de recetas favoritas, puedo añadir una receta a un usuario ver las recetas favoritas o eliminarla de favoritas.
 
-
-
-
-## TODO
-- quiero actualizar la base de datos para que en la tabla de usuarios me admita fotos pero no se hacerlo
-- poner una lista de productos favoritos
+he estado haciendo el proyecto de manera desorganizada, me he hecho una hoja con lo que tengo y lo que falta de todo el proyecto, asique a partir de ahora
+intentare seguir un orden para no estar saltando entre un lado y otro.
