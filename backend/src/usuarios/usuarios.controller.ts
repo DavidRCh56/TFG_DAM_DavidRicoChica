@@ -20,17 +20,13 @@ import type { Request } from 'express';
  * interface que extiende la interfaz Request de Express para incluir el campo "user"
  * esta propiedad "user" la inyecta el guardia de autenticación FirebaseAuthGuard una vez valida el token JWT,
  * user es un objeto que debe tener al menos un identificador único "uid" de tipo string para identificar al usuario,
- * el índice "[key: string]: any;" indica que "user" puede contener otras propiedades adicionales (como email, name, etc)
- * sin restricciones de tipo
  * este interface sirve para que en el controlador TypeScript entienda que req.user existe y tiene una estructura determinada,
  * evitando errores y warnings relacionados con el acceso a propiedades no declaradas en Request original
  */
 interface RequestConUser extends Request {
   user: {
     uid: string;
-    email?: string;
     rol?: string;
-    [key: string]: any;
   };
 }
 

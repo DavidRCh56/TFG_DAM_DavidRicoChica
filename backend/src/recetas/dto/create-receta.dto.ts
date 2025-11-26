@@ -5,4 +5,6 @@ export class CreateRecetaDto {
   ingredientes: any;
   pasos: string;
   url_imagen: string;
+  predeterminada?: boolean;
+  compartida?: boolean;
 }

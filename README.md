@@ -414,3 +414,12 @@ se debe de volver a iniciar sesion.
 
 ahora estoy haciendo para que un usuario administrador pueda eliminar o editar otros usuarios, excluyendo la contraseña de usuarios que no sean el suyo,
 tambien puede cambiar el rol de los demas usuarios.
+
+he hecho ahora que a la hora de gestionar las recetas, como modifique ayer en el sql, que tenga un apartado de predeterminada, que todas las recetas que 
+tengan ese apartado en true que en mi base de datos he visto que se guarda como un 0 o 1, que si tienen true o 1 que todos los usuarios al hacer un get
+puedan ver sus recetas y ademas las recetas predetermiandas, pero no las recetas de los demas, resumen, cliente puede crear editar y eliminar recetas suyas,
+que no sean de otro usuario y que tampoco sean predeterminadas, si es su receta, pero es predeterminada no le deja nada mas que verla, admin,
+puede editar y eliminar sus recetas y las de otras personas por id, sin importar si es predeterminada o no, este tambien puede crear una predeterminada, el 
+cliente no puede.
+al principio como en el insert del sql puse true, no me lo pillaba bien, por lo que he cambiado y en vez de ponerle true le he puesto 1, para que me detecte
+la base de datos que ese dato es true, ya que literalmente el "true" no lo reconocia.

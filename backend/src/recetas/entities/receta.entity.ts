@@ -22,4 +22,10 @@ export class Receta {
 
   @Column({ type: 'text' })
   url_imagen: string;
+
+  @Column({ type: 'boolean', default: false })
+  predeterminada: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  compartida: boolean;
 }
