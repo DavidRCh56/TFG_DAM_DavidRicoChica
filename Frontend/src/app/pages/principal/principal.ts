@@ -76,6 +76,8 @@ export class Principal implements OnInit {
 
   readonly SUPERMERCADOS: string[] = ['Mercadona', 'Dia'];
 
+  historialBusquedas: { termino_busqueda: string }[] = [];
+
   constructor(
     private http: HttpClient,
     private scraperService: ScraperService,
@@ -111,6 +113,7 @@ export class Principal implements OnInit {
     //cargar selecciones previas guardadas en BD
     await this.cargarSeleccionesBD();
     await this.cargarTodosProductos();
+    await this.cargarHistorialBusquedas();
   }
 
   // validacion de token con el backend
@@ -409,6 +412,29 @@ export class Principal implements OnInit {
         headers: { Authorization: `Bearer ${this.token}` }
       }
     ));
+
+    //guarda lo buscado
+    await this.http.post(
+      `${this.backendUrl}/historial-busquedas`,
+      { termino_busqueda: this.buscador },
+      { headers: { Authorization: `Bearer ${this.token}` } }
+    ).toPromise();
+
+    //actualiza historial
+    await this.cargarHistorialBusquedas();
+  }
+
+  async cargarHistorialBusquedas() {
+    this.historialBusquedas = await firstValueFrom(
+      this.http.get<{ termino_busqueda: string }[]>(`${this.backendUrl}/historial-busquedas/listar`, {
+        headers: { Authorization: `Bearer ${this.token}` }
+      })
+    );
+  }
+
+  buscarDesdeHistorial(termino: string) {
+    this.buscador = termino;
+    this.buscarProductos();
   }
 
   //utilidad para filtro de supermercados

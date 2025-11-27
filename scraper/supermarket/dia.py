@@ -72,7 +72,12 @@ def get_products_by_category_dia(list_categories, ruta):
         #Obtener los productos de la categoria
         list_products_data = requests.get(url, headers=HEADERS_REQUEST_DIA)
         if list_products_data.status_code == 200 and list_products_data.text.strip():
-            list_products = list_products_data.json()
+            try:
+                list_products = list_products_data.json()
+            except Exception as e:
+                print(f"Error parseando JSON categoría {stringCategoria}: {e}")
+                print("Respuesta:", list_products_data.text[:1000])
+                continue
         else:
             print(f"Error al obtener datos categoría {stringCategoria}: Código {list_products_data.status_code}")
             continue

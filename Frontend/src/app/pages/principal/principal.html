@@ -209,56 +209,90 @@
         </div>
       </div>
       <!-- todos los productos buscados -->
-      <div *ngIf="buscador.trim()">
-        <div *ngIf="resultadosBuscador.length"
-            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
-          <div *ngFor="let prod of resultadosBuscador"
-              class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
-            <img
-              [src]="prod.Url_imagen || noDisponibleImg"
-              alt="Foto producto"
-              class="mb-4 w-24 h-24 object-contain rounded shadow"
-            >
-            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
-            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
-            <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
-            <button (click)="alert('No implementado')"
-                    class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
-              Añadir
-            </button>
+      <div *ngIf="buscador.trim()" class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div class="lg:col-span-4">
+          <div *ngIf="resultadosBuscador.length"
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+            <div *ngFor="let prod of resultadosBuscador"
+                class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
+              <img
+                [src]="prod.Url_imagen || noDisponibleImg"
+                alt="Foto producto"
+                class="mb-4 w-24 h-24 object-contain rounded shadow"
+              >
+              <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
+              <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
+              <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
+              <button (click)="alert('No implementado')"
+                      class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
+                Añadir
+              </button>
+            </div>
+          </div>
+          <div *ngIf="!resultadosBuscador.length"
+              class="mt-6 text-gray-400 font-medium text-center">
+            No se encontraron productos para "{{ buscador }}" en {{ supermercado || 'ningún supermercado' }}.
           </div>
         </div>
-        <div *ngIf="!resultadosBuscador.length"
-            class="mt-6 text-gray-400 font-medium text-center">
-          No se encontraron productos para "{{ buscador }}" en {{ supermercado || 'ningún supermercado' }}.
+
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg shadow max-h-[500px] sticky top-4">
+          <h3 class="text-lg font-semibold mb-4">Búsquedas recientes</h3>
+          <ul *ngIf="historialBusquedas.length > 0; else sinHistorial" class="space-y-2 max-h-64 overflow-auto">
+            <li *ngFor="let termino of historialBusquedas">
+              <button (click)="buscarDesdeHistorial(termino.termino_busqueda)" 
+                      class="w-full text-left text-blue-600 hover:underline p-2 rounded hover:bg-gray-100">
+                {{ termino.termino_busqueda }}
+              </button>
+            </li>
+          </ul>
+          <ng-template #sinHistorial>
+            <p class="text-gray-500 text-sm italic">No hay búsquedas recientes.</p>
+          </ng-template>
         </div>
       </div>
-
-      <!-- todos los productos -->
-      <div *ngIf="!buscador.trim()">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
-          <div *ngFor="let prod of todosProductos.slice((paginaActiva-1)*productosPorPagina, paginaActiva*productosPorPagina)"
-              class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
-            <img
-              [src]="prod.Url_imagen || noDisponibleImg"
-              alt="Foto producto"
-              class="mb-4 w-24 h-24 object-contain rounded shadow"
-            >
-            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
-            <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
-            <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
-            <button (click)="alert('No implementado')"
-                    class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
-              Añadir
-            </button>
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div class="lg:col-span-4">
+          <!-- todos los productos -->
+          <div *ngIf="!buscador.trim()">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+              <div *ngFor="let prod of todosProductos.slice((paginaActiva-1)*productosPorPagina, paginaActiva*productosPorPagina)"
+                  class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
+                <img
+                  [src]="prod.Url_imagen || noDisponibleImg"
+                  alt="Foto producto"
+                  class="mb-4 w-24 h-24 object-contain rounded shadow"
+                >
+                <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
+                <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
+                <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
+                <button (click)="alert('No implementado')"
+                        class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
+                  Añadir
+                </button>
+              </div>
+            </div>
+            <div class="flex justify-center gap-2 mt-10">
+              <button (click)="irAnterior()" [disabled]="paginaActiva === 1">Anterior</button>
+              <span class="px-4 py-2 bg-gray-100 rounded font-medium">
+                Página {{ paginaActiva }} de {{ totalPaginas }}
+              </span>
+              <button (click)="irSiguiente()" [disabled]="paginaActiva === totalPaginas">Siguiente</button>
+            </div>
           </div>
         </div>
-        <div class="flex justify-center gap-2 mt-10">
-          <button (click)="irAnterior()" [disabled]="paginaActiva === 1">Anterior</button>
-          <span class="px-4 py-2 bg-gray-100 rounded font-medium">
-            Página {{ paginaActiva }} de {{ totalPaginas }}
-          </span>
-          <button (click)="irSiguiente()" [disabled]="paginaActiva === totalPaginas">Siguiente</button>
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg shadow max-h-[500px] sticky top-4">
+          <h3 class="text-lg font-semibold mb-4">Búsquedas recientes</h3>
+          <ul *ngIf="historialBusquedas.length > 0; else sinHistorial" class="space-y-2 max-h-64 overflow-auto">
+            <li *ngFor="let termino of historialBusquedas">
+              <button (click)="buscarDesdeHistorial(termino.termino_busqueda)" 
+                      class="w-full text-left text-blue-600 hover:underline p-2 rounded hover:bg-gray-100">
+                {{ termino.termino_busqueda }}
+              </button>
+            </li>
+          </ul>
+          <ng-template #sinHistorial>
+            <p class="text-gray-500 text-sm italic">No hay búsquedas recientes.</p>
+          </ng-template>
         </div>
       </div>
     </section>

@@ -8,6 +8,7 @@ import { FirebaseModule } from './firebase/firebase.module';
 import { CalendarioModule } from './calendario/calendario.module';
 import { ProductosModule } from './productos/productos.module';
 import { RecetasFavoritasModule } from './recetasFavoritas/recetasFavoritas.module';
+import { HistorialBusquedasModule } from './historial_busquedas/historial-busquedas.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RecetasFavoritasModule } from './recetasFavoritas/recetasFavoritas.modu
     CalendarioModule,
     ProductosModule,
     RecetasFavoritasModule,
+    HistorialBusquedasModule,
   ],
   controllers: [],
   providers: [],

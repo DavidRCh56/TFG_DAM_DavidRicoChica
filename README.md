@@ -423,3 +423,10 @@ puede editar y eliminar sus recetas y las de otras personas por id, sin importar
 cliente no puede.
 al principio como en el insert del sql puse true, no me lo pillaba bien, por lo que he cambiado y en vez de ponerle true le he puesto 1, para que me detecte
 la base de datos que ese dato es true, ya que literalmente el "true" no lo reconocia.
+
+No entiendo que le ha estado pasando al scraper ultimamente, antes no funcionaba, y ahora le pongo un simple try catch para ver que errores me da y ya si me
+deja, pero si se lo quito me vuelve a dar error, y todo esto solo con "Dia" asique lo voy a dejar con el try catch por si acaso.
+He creado el historial de busquedas en productos, recoge el contenido del input cuando se realiza el buscar y actualiza el listado que se muestra a la derecha
+de los productos, este listado de busquedas es navegable, es decir, cuando tu pulsas sobre un elemento de la lista, se realiza automaticamente una busqueda
+de ese elemento pulsado, le he hecho el back y tambien el front porque creo que era la manera mas sencilla para probarlo y pues lo he puesto medio decente
+y no lo voy a borrar ya que esta hecho.
