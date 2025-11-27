@@ -430,3 +430,7 @@ He creado el historial de busquedas en productos, recoge el contenido del input 
 de los productos, este listado de busquedas es navegable, es decir, cuando tu pulsas sobre un elemento de la lista, se realiza automaticamente una busqueda
 de ese elemento pulsado, le he hecho el back y tambien el front porque creo que era la manera mas sencilla para probarlo y pues lo he puesto medio decente
 y no lo voy a borrar ya que esta hecho.
+Se me habia olvidado añadir el eliminar historial y eliminar un elemento del historial. tambien me he fijado de que cuando busco un producto, y despues 
+quiero buscar otro, mientras lo estoy buscando, antes de pulsar intro o darle a biscar, me muestra los resultados de la busqueda anterior, y eso no me interesa,
+por lo que he creado "inputBusquedaValue" (tambien le he añadido el id a los valores buscados), he modificado la funcion de "buscarProductos" para que si 
+se presiona intro o buscar estando el input vacio, que devuelva todos los productos.

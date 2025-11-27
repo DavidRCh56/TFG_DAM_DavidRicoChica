@@ -28,4 +28,18 @@ export class HistorialBusquedasService {
       order: { id: 'DESC' },
     });
   }
+
+  async eliminarBusqueda(id: number, uid_firebase: string) {
+    const registro = await this.historialRepository.findOne({
+      where: { id, uid_firebase },
+    });
+    if (!registro) {
+      throw new Error('Registro no encontrado o no autorizado');
+    }
+    return this.historialRepository.delete(id);
+  }
+
+  async eliminarTodoHistorial(uid_firebase: string) {
+    return this.historialRepository.delete({ uid_firebase });
+  }
 }

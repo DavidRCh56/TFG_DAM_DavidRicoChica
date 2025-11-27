@@ -76,7 +76,8 @@ export class Principal implements OnInit {
 
   readonly SUPERMERCADOS: string[] = ['Mercadona', 'Dia'];
 
-  historialBusquedas: { termino_busqueda: string }[] = [];
+  inputBusquedaValue = '';
+  historialBusquedas: { id: number; termino_busqueda: string }[] = [];
 
   constructor(
     private http: HttpClient,
@@ -398,7 +399,8 @@ export class Principal implements OnInit {
   }
 
   async buscarProductos() {
-    if (!this.buscador.trim()) {
+    this.buscador = this.inputBusquedaValue.trim();
+    if (!this.buscador) {
       this.resultadosBuscador = [];
       await this.cargarTodosProductos();
       return;
@@ -426,15 +428,47 @@ export class Principal implements OnInit {
 
   async cargarHistorialBusquedas() {
     this.historialBusquedas = await firstValueFrom(
-      this.http.get<{ termino_busqueda: string }[]>(`${this.backendUrl}/historial-busquedas/listar`, {
+      this.http.get<{ id: number; termino_busqueda: string }[]>(
+        `${this.backendUrl}/historial-busquedas/listar`, {
         headers: { Authorization: `Bearer ${this.token}` }
       })
     );
   }
 
   buscarDesdeHistorial(termino: string) {
+   this.inputBusquedaValue = termino;
     this.buscador = termino;
     this.buscarProductos();
+  }
+
+  async eliminarBusqueda(id: number) {
+    try {
+      await firstValueFrom(
+        this.http.delete(`${this.backendUrl}/historial-busquedas/${id}`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+      await this.cargarHistorialBusquedas();
+    } catch (error) {
+      console.error('Error eliminando búsqueda:', error);
+    }
+  }
+
+  async eliminarTodoHistorial() {
+    try {
+      await firstValueFrom(
+        this.http.delete(`${this.backendUrl}/historial-busquedas`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+      await this.cargarHistorialBusquedas();
+    } catch (error) {
+      console.error('Error eliminando todo el historial:', error);
+    }
+  }
+
+  onInputChange(event: Event) {
+    this.inputBusquedaValue = (event.target as HTMLInputElement).value;
   }
 
   //utilidad para filtro de supermercados

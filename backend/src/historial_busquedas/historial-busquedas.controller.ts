@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  Get,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { HistorialBusquedasService } from './historial-busquedas.service';
 import { CreateHistorialBusquedaDto } from './dto/create-historial-busqueda.dto';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
@@ -28,5 +37,17 @@ export class HistorialBusquedasController {
   @Get('listar')
   async listar(@Req() req: RequestConUser) {
     return this.historialService.listarPorUsuario(req.user.uid);
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Delete(':id')
+  async eliminarBusqueda(@Req() req: RequestConUser, @Param('id') id: string) {
+    return this.historialService.eliminarBusqueda(Number(id), req.user.uid);
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Delete()
+  async eliminarTodoHistorial(@Req() req: RequestConUser) {
+    return this.historialService.eliminarTodoHistorial(req.user.uid);
   }
 }
