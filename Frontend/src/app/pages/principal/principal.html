@@ -168,7 +168,7 @@
                     [ngModel]="seleccionesRecetasPorDia[anoActivo + '-' + (mesActivo + 1).toString().padStart(2, '0') + '-' + dia.numero.toString().padStart(2, '0')]?.[tipo]"
                     (ngModelChange)="cambiarSeleccion(anoActivo + '-' + (mesActivo + 1).toString().padStart(2, '0') + '-' + dia.numero.toString().padStart(2, '0'), tipo, $event)"
                   >
-                    <option [value]="0" disabled>Selecciona {{ tipo }}</option>
+                    <option [value]="0">Sin {{ tipo }}</option>
                     <option *ngFor="let receta of recetasDisponibles" [value]="receta.id">
                       {{ receta.titulo }}
                     </option>

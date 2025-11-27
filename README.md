@@ -34,7 +34,6 @@ productos disponibles y sus precios).
 | CRUD recetas predefinidas      | ❌    | ✔️      |
 | Editar recetas de usuarios     | ❌    | ✔️      |
 | CRUD Calendario propio         | ✔️    | ✔️      |
-| Editar calendarios ajenos      | ❌    | ✔️      |
 | Gestión usuarios y roles       | ❌    | ✔️      |
 | Gestión lista de la compra     | ✔️    | ✔️      |
 | Apartado para compartir recetas| ✔️    | ✔️      |
@@ -434,3 +433,4 @@ Se me habia olvidado añadir el eliminar historial y eliminar un elemento del hi
 quiero buscar otro, mientras lo estoy buscando, antes de pulsar intro o darle a biscar, me muestra los resultados de la busqueda anterior, y eso no me interesa,
 por lo que he creado "inputBusquedaValue" (tambien le he añadido el id a los valores buscados), he modificado la funcion de "buscarProductos" para que si 
 se presiona intro o buscar estando el input vacio, que devuelva todos los productos.
+he modificado una cosa en calendario para que se pueda quitar la receta de un dia en concreto.
