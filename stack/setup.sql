@@ -73,12 +73,17 @@ CREATE TABLE IF NOT EXISTS calendario (
 CREATE TABLE IF NOT EXISTS listas_compra (
     id INT AUTO_INCREMENT PRIMARY KEY,
     uid_firebase VARCHAR(128) NOT NULL,
-    id_producto VARCHAR(20) NOT NULL,
+    fecha DATE NOT NULL,
+    id_producto VARCHAR(30) NOT NULL,
+    nombre_producto VARCHAR(255) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    supermercado VARCHAR(20) NOT NULL,
     cantidad INT DEFAULT 1,
     FOREIGN KEY (uid_firebase) REFERENCES usuarios(uid_firebase),
     FOREIGN KEY (id_producto) REFERENCES productos(Id),
-    UNIQUE (uid_firebase, id_producto),
-    INDEX idx_uid_firebase (uid_firebase)
+    UNIQUE (uid_firebase, id_producto, fecha),
+    INDEX idx_uid_firebase (uid_firebase),
+    INDEX idx_fecha_lista (fecha)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS historial_busquedas (

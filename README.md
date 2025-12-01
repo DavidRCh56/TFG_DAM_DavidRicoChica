@@ -434,3 +434,14 @@ quiero buscar otro, mientras lo estoy buscando, antes de pulsar intro o darle a 
 por lo que he creado "inputBusquedaValue" (tambien le he añadido el id a los valores buscados), he modificado la funcion de "buscarProductos" para que si 
 se presiona intro o buscar estando el input vacio, que devuelva todos los productos.
 he modificado una cosa en calendario para que se pueda quitar la receta de un dia en concreto.
+
+he usado n8n para que cunado se haga un post de las recetas que se añadan en el calendario a n8n
+para recoger primero el body del post, que tiene los datos de uid, id de la receta, fecha y tipo de comida,
+despues filtro lo que recoge para solo usar ese body con esos datos, luego hago un apeticion SQL 
+donde solicito toda la informacion de la receta que tenga el id que se ha recogido, y filtro y parseo
+los ingredientes de la receta para obtener el nombre de cada producto y otros de sus datos,
+luego hago otra peticion SQL que se encargar de buscar en mi base de datos los datos id, nombre,
+precio y supermercado del producto que se ha obtenido de la receta, y luego realizo un insert 
+en sql a la tabla de lista de la compra correspondiendo los datos recibidos con los apartados en los que iria.
+a parte tambien he hecho el CRUD de lista de la compra, para que se pueda crear(añadir) productos, editar esos productos, que hare en el front
+que solo se pueda modificar la cantidad y eliminar algun producto de la lista.

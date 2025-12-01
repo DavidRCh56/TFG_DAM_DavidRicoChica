@@ -9,6 +9,7 @@ import { CalendarioModule } from './calendario/calendario.module';
 import { ProductosModule } from './productos/productos.module';
 import { RecetasFavoritasModule } from './recetasFavoritas/recetasFavoritas.module';
 import { HistorialBusquedasModule } from './historial_busquedas/historial-busquedas.module';
+import { ListaCompraModule } from './lista-compra/lista-compra.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { HistorialBusquedasModule } from './historial_busquedas/historial-busque
     ProductosModule,
     RecetasFavoritasModule,
     HistorialBusquedasModule,
+    ListaCompraModule,
   ],
   controllers: [],
   providers: [],
