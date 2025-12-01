@@ -55,6 +55,16 @@
         Recetas
       </button>
       <button
+        (click)="setActiveSection('recetasFavoritas')"
+        [ngClass]="{
+          'bg-gray-300': recetasFavoritas,
+          'hover:bg-gray-200': !recetasFavoritas
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Recetas Favoritas
+      </button>
+      <button
         (click)="setActiveSection('foroRecetas')"
         [ngClass]="{
           'bg-gray-300': foroRecetas,
@@ -320,6 +330,10 @@
         </div>
         <div *ngIf="errorIA" class="mt-2 text-red-500 text-sm">{{ errorIA }}</div>
       </div>
+    </section>
+    <section *ngIf="recetasFavoritas">
+      <h2 class="text-xl mb-2">Recetas favoritas</h2>
+      <p>Explora y guarda tus recetas favoritas.</p>
     </section>
     <section *ngIf="foroRecetas">
       <h2 class="text-xl mb-2">Foro de Recetas</h2>

@@ -20,6 +20,7 @@ export class Principal implements OnInit {
   miCalendario: boolean = false;
   listaCompra: boolean = false;
   recetas: boolean = false;
+  recetasFavoritas: boolean = false;
   foroRecetas: boolean = false;
   produtos: boolean = false;
 
@@ -169,6 +170,7 @@ export class Principal implements OnInit {
     this.miCalendario = false;
     this.listaCompra = false;
     this.recetas = false;
+    this.recetasFavoritas = false;
     this.foroRecetas = false;
     this.produtos = false;
 
@@ -187,6 +189,9 @@ export class Principal implements OnInit {
         break;
       case 'recetas':
         this.recetas = true;
+        break;
+      case 'recetasFavoritas':
+        this.recetasFavoritas = true;
         break;
       case 'foroRecetas':
         this.foroRecetas = true;
