@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { firstValueFrom, map, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { ScraperService } from '../../services/scraper.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +7,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { HttpHeaders } from '@angular/common/http';
-import { getAuth } from 'firebase/auth';
+import { getAuth, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 
 @Component({
   selector: 'app-principal',
@@ -23,6 +23,7 @@ export class Principal implements OnInit {
   recetasFavoritas: boolean = false;
   foroRecetas: boolean = false;
   produtos: boolean = false;
+  gestionUsuario: boolean = false;
 
   token: string | null = localStorage.getItem('userToken');
   tokenValido: boolean | null = null;
@@ -69,6 +70,7 @@ export class Principal implements OnInit {
   cargandoLista: boolean = false;
 
   noDisponibleImg: string = 'https://ia601909.us.archive.org/8/items/no-disponible_202511/no%20disponible.png';
+  usuarioSinFoto: string = 'https://archive.org/download/foto-perfil-base/foto-perfil-base.png';
 
   todosProductos: any[] = [];
   paginaActiva: number = 1;
@@ -79,6 +81,21 @@ export class Principal implements OnInit {
 
   inputBusquedaValue = '';
   historialBusquedas: { id: number; termino_busqueda: string }[] = [];
+
+  usuarios: any[] = [];
+  formulario: any = {
+    uid_firebase: '',
+    email: '',
+    nombre_usuario: '',
+    rol: 'cliente' as 'cliente' | 'admin',
+    foto_url: '',
+    password_actual: '',
+    nueva_password: ''
+  };
+  editandoUid: string | null = null;
+  cargando: boolean = false;
+  mensajeUsuario: string = '';
+  exitoUsuario: boolean = true;
 
   constructor(
     private http: HttpClient,
@@ -102,6 +119,14 @@ export class Principal implements OnInit {
 
     this.uid_firebase = await this.getUidFirebase();
 
+    //cargar datos del usuario actual para el formulario
+    await this.cargarDatosUsuario();
+
+    //cargar usuarios si es admin
+    if (this.userRole === 'admin') {
+      await this.cargarUsuarios();
+    }
+
     this.calcularSemanaActual();
 
     //inicializa calendario mensual
@@ -116,6 +141,204 @@ export class Principal implements OnInit {
     await this.cargarSeleccionesBD();
     await this.cargarTodosProductos();
     await this.cargarHistorialBusquedas();
+  }
+
+  async cargarUsuarios() {
+    if (this.userRole !== 'admin') return;
+
+    try {
+      this.usuarios = await firstValueFrom(
+        this.http.get<any[]>(`${this.backendUrl}/usuarios`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+    } catch (error) {
+      console.error('Error cargando usuarios:', error);
+      this.mensajeUsuario = 'Error al cargar usuarios';
+      this.exitoUsuario = false;
+    }
+  }
+
+  async cargarDatosUsuario(uid?: string) {
+
+    try {
+      const targetUid = uid || this.uid_firebase;
+      const usuario = await firstValueFrom(
+        this.http.get<any>(`${this.backendUrl}/usuarios/${targetUid}`, {
+          headers: { Authorization: `Bearer ${this.token || localStorage.getItem('userToken')!}` }
+        })
+      );
+      this.formulario = {
+        uid_firebase: usuario.uid_firebase,
+        email: usuario.email,
+        nombre_usuario: usuario.nombre_usuario,
+        rol: usuario.rol,
+        foto_url: usuario.foto_url || '',
+        password_actual: '',
+        nueva_password: ''
+      };
+      console.log('Datos usuario cargados:', this.formulario);
+    } catch (error) {
+      console.error('Error cargando datos usuario:', error);
+      this.formulario = {
+        uid_firebase: this.uid_firebase,
+        email: 'usuario@ejemplo.com',
+        nombre_usuario: 'Usuario',
+        rol: (this.userRole as 'cliente' | 'admin') || 'cliente',
+        foto_url: '',
+        password_actual: '',
+        nueva_password: ''
+      };
+    }
+  }
+
+  private async cambiarPasswordEnFirebase(email: string, passwordActual: string, nuevaPassword: string) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    
+    if (!user) {
+      throw new Error('No hay usuario autenticado');
+    }
+    const cred = EmailAuthProvider.credential(email, passwordActual);
+    await reauthenticateWithCredential(user, cred);
+    await updatePassword(user, nuevaPassword);
+  }
+
+  async guardarCambios() {
+
+    if (this.cargando) return;
+
+    this.cargando = true;
+    this.mensajeUsuario = '';
+    
+    try {
+      const esPropio = !this.editandoUid || this.editandoUid === this.uid_firebase;
+
+      if (esPropio && this.formulario.nueva_password) {
+        if (!this.formulario.password_actual) {
+          throw new Error('Debes introducir la contraseña actual para cambiar la contraseña.');
+        }
+        await this.cambiarPasswordEnFirebase(
+          this.formulario.email,
+          this.formulario.password_actual,
+          this.formulario.nueva_password
+        );
+      }
+      const payload: any = {
+        email: this.formulario.email,
+        nombre_usuario: this.formulario.nombre_usuario,
+        foto_url: this.formulario.foto_url || null
+      };
+
+      if (this.userRole === 'admin' && this.editandoUid) {
+        payload.rol = this.formulario.rol;
+      }
+      await firstValueFrom(
+        this.http.patch(
+          `${this.backendUrl}/usuarios/${this.formulario.uid_firebase}`,
+          payload,
+          { headers: { Authorization: `Bearer ${this.token}` } }
+        )
+      );
+      this.mensajeUsuario = 'Usuario actualizado correctamente';
+      this.exitoUsuario = true;
+      await this.cargarDatosUsuario();
+
+      if (this.userRole === 'admin') {
+        await this.cargarUsuarios();
+      }
+
+      if (this.editandoUid && this.editandoUid !== this.uid_firebase) {
+        this.cancelarEdicion();
+      }
+
+      //limpiar campos de contraseña
+      this.formulario.password_actual = '';
+      this.formulario.nueva_password = '';
+
+    } catch (error: any) {
+      console.error('Error guardando cambios:', error);
+      this.mensajeUsuario = error.message || error.error?.message || 'Error al guardar cambios';
+      this.exitoUsuario = false;
+    } finally {
+      this.cargando = false;
+    }
+  }
+
+  editarUsuario(usuario: any) {
+    this.editandoUid = usuario.uid_firebase;
+    this.formulario = {
+      uid_firebase: usuario.uid_firebase,
+      email: usuario.email,
+      nombre_usuario: usuario.nombre_usuario,
+      rol: usuario.rol,
+      foto_url: usuario.foto_url || '',
+      password_actual: '',
+      nueva_password: ''
+    };
+  }
+
+  cancelarEdicion() {
+    this.editandoUid = null;
+    this.formulario.password_actual = '';
+    this.formulario.nueva_password = '';
+    this.cargarDatosUsuario();
+    this.mensajeUsuario = '';
+  }
+
+  async eliminarUsuario(uid: string) {
+    if (!confirm(`¿Eliminar usuario ${uid}? Esta acción no se puede deshacer.`)) return;
+
+    try {
+      await firstValueFrom(
+        this.http.delete(`${this.backendUrl}/usuarios/${uid}`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+
+      this.usuarios = this.usuarios.filter(u => u.uid_firebase !== uid);
+      this.mensajeUsuario = 'Usuario eliminado correctamente';
+      this.exitoUsuario = true;
+
+    } catch (error: any) {
+      console.error('Error eliminando usuario:', error);
+      this.mensajeUsuario = error.error?.message || 'Error al eliminar usuario';
+      this.exitoUsuario = false;
+    }
+  }
+
+  trackByUid(index: number, usuario: any): string {
+    return usuario.uid_firebase;
+  }
+
+  async eliminarMiCuenta() {
+    if (!confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción es irreversible.')) return;
+
+    this.cargando = true;
+    this.mensajeUsuario = '';
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('No hay usuario autenticado.');
+      }
+      await firstValueFrom(
+        this.http.delete(`${this.backendUrl}/usuarios/${this.uid_firebase}`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+      await this.eliminarUsuario(user.uid);
+      localStorage.removeItem('userToken');
+      this.mensajeUsuario = 'Cuenta eliminada correctamente.';
+      this.exitoUsuario = true;
+      this.router.navigate(['/login']);
+
+    } catch (error: any) {
+      console.error('Error eliminando la cuenta:', error);
+      this.mensajeUsuario = error.message || error.error?.message || 'Error al eliminar la cuenta.';
+      this.exitoUsuario = false;
+    }
   }
 
   // validacion de token con el backend
@@ -173,8 +396,15 @@ export class Principal implements OnInit {
     this.recetasFavoritas = false;
     this.foroRecetas = false;
     this.produtos = false;
+    this.gestionUsuario = false;
 
     switch (nombre) {
+      case 'gestionUsuario':
+        this.gestionUsuario = true;
+        if (this.userRole === 'admin') {
+          this.cargarUsuarios();
+        }
+        break;
       case 'resumenSemanal':
         this.resumenSemanal = true;
         break;
@@ -388,7 +618,7 @@ export class Principal implements OnInit {
         comida: selec.comida || null,
         cena: selec.cena || null
       };
-      
+
       peticiones.push(this.http.post(
         `${this.backendUrl}/calendario/crear-actualizar`,
         payload,
@@ -441,7 +671,7 @@ export class Principal implements OnInit {
   }
 
   buscarDesdeHistorial(termino: string) {
-   this.inputBusquedaValue = termino;
+    this.inputBusquedaValue = termino;
     this.buscador = termino;
     this.buscarProductos();
   }
@@ -489,15 +719,30 @@ export class Principal implements OnInit {
   }
 
   async getUserRoleAsync(): Promise<{ rol: string | null }> {
-    const user = await getAuth().currentUser;
-    const token = user ? await user.getIdToken() : '';
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return await firstValueFrom(
-      this.http.get<{ rol: string | null }>(
-        `${this.backendUrl}/usuarios/rol`,
-        { headers }
-      )
-    );
+    try {
+      const user = await getAuth().currentUser;
+      const token = user ? await user.getIdToken() : '';
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      const perfil = await firstValueFrom(
+        this.http.get<any>(`${this.backendUrl}/usuarios/perfil`, { headers })
+      );
+
+      this.formulario = {
+        uid_firebase: this.uid_firebase,
+        email: perfil.email,
+        nombre_usuario: perfil.nombre_usuario,
+        rol: perfil.rol,
+        foto_url: perfil.foto_url || '',
+        password_actual: '',
+        nueva_password: ''
+      };
+
+      return { rol: perfil.rol };
+      
+    } catch (error) {
+      console.error('Error getUserRole:', error);
+      return { rol: null };
+    }
   }
 
   async cargarTodosProductos() {

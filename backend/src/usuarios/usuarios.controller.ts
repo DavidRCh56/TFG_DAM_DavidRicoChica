@@ -9,6 +9,7 @@ import {
   Delete,
   ForbiddenException,
   Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -120,5 +121,43 @@ export class UsuariosController {
       if (uid !== req.user.uid) throw new ForbiddenException('No autorizado');
       return this.usuariosService.remove(uid);
     }
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Get('perfil')
+  async getPerfil(@Req() req: RequestConUser) {
+    const usuario = await this.usuariosService.findByUid(req.user.uid);
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    return {
+      uid_firebase: usuario.uid_firebase,
+      email: usuario.email,
+      nombre_usuario: usuario.nombre_usuario,
+      rol: usuario.rol,
+      foto_url: usuario.foto_url,
+    };
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Get(':uid')
+  async findOne(@Req() req: RequestConUser, @Param('uid') uid: string) {
+    const rol = await this.getUserRole(req);
+    if (rol !== 'admin' && uid !== req.user.uid) {
+      throw new ForbiddenException('No autorizado');
+    }
+
+    const usuario = await this.usuariosService.findByUid(uid);
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return {
+      uid_firebase: usuario.uid_firebase,
+      email: usuario.email,
+      nombre_usuario: usuario.nombre_usuario,
+      rol: usuario.rol,
+      foto_url: usuario.foto_url,
+    };
   }
 }
