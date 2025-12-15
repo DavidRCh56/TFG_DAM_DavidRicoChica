@@ -40,6 +40,11 @@ export class RecetasController {
     return this.recetasService.findAll(uid_firebase);
   }
 
+  @Get('foro')
+  findAllForum() {
+    return this.recetasService.findAllForum();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.recetasService.findOne(Number(id));

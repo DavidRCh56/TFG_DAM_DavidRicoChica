@@ -33,8 +33,18 @@ export class ListaCompraController {
   }
 
   @Get()
-  findAll(@Query('uid_firebase') uid_firebase: string) {
-    return this.listaCompraService.findAll(uid_firebase);
+  findAll(
+    @Query('uid_firebase') uid_firebase: string,
+    @Query('fecha') fecha?: string,
+    @Query('fecha_inicio') fecha_inicio?: string,
+    @Query('fecha_fin') fecha_fin?: string,
+  ) {
+    return this.listaCompraService.findAll(
+      uid_firebase,
+      fecha,
+      fecha_inicio,
+      fecha_fin,
+    );
   }
 
   @Get(':id')

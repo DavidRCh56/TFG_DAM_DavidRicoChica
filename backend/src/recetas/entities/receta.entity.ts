@@ -20,8 +20,8 @@ export class Receta {
   @Column({ type: 'text' })
   pasos: string;
 
-  @Column({ type: 'text' })
-  url_imagen: string;
+  @Column({ name: 'url_imagen', type: 'text' })
+  urlimagen: string;
 
   @Column({ type: 'boolean', default: false })
   predeterminada: boolean;

@@ -23,17 +23,50 @@ export class ListaCompraService {
     createListaCompraDto: CreateListaCompraDto,
     userUid: string,
   ): Promise<ListaCompra> {
+    const elementoExistente = await this.listaCompraRepository.findOne({
+      where: {
+        uid_firebase: userUid,
+        fecha: createListaCompraDto.fecha,
+        id_producto: createListaCompraDto.id_producto,
+      },
+    });
+
+    if (elementoExistente) {
+      elementoExistente.cantidad =
+        (elementoExistente.cantidad || 0) +
+        (createListaCompraDto.cantidad ?? 1);
+
+      return this.listaCompraRepository.save(elementoExistente);
+    }
+
     const listaCompra = this.listaCompraRepository.create({
       ...createListaCompraDto,
       uid_firebase: userUid,
+      cantidad: createListaCompraDto.cantidad ?? 1,
     });
     return this.listaCompraRepository.save(listaCompra);
   }
 
-  async findAll(uid_firebase: string): Promise<ListaCompra[]> {
-    return this.listaCompraRepository
+  async findAll(
+    uid_firebase: string,
+    fecha?: string,
+    fecha_inicio?: string,
+    fecha_fin?: string,
+  ): Promise<ListaCompra[]> {
+    const query = this.listaCompraRepository
       .createQueryBuilder('lista')
-      .where('lista.uid_firebase = :uid', { uid: uid_firebase })
+      .where('lista.uid_firebase = :uid', { uid: uid_firebase });
+
+    if (fecha) {
+      query.andWhere('lista.fecha = :fecha', { fecha });
+    } else if (fecha_inicio && fecha_fin) {
+      query.andWhere('lista.fecha BETWEEN :inicio AND :fin', {
+        inicio: fecha_inicio,
+        fin: fecha_fin,
+      });
+    }
+
+    return query
       .orderBy('lista.fecha', 'DESC')
       .addOrderBy('lista.nombre_producto', 'ASC')
       .getMany();

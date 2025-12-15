@@ -4,10 +4,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Usuario } from '../../usuarios/entities/usuario.entity';
 
 @Entity('listas_compra')
+@Unique('uq_uid_fecha_producto', ['uid_firebase', 'fecha', 'id_producto'])
 export class ListaCompra {
   @PrimaryGeneratedColumn()
   id: number;

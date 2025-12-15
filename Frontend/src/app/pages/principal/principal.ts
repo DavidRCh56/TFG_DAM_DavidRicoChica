@@ -97,6 +97,55 @@ export class Principal implements OnInit {
   mensajeUsuario: string = '';
   exitoUsuario: boolean = true;
 
+  listaCompraDiaSeleccionado: string = '';
+  listaCompraSemanaSeleccionada: number = 0;
+  vistaListaCompra: 'dia' | 'semana' = 'dia';
+  cargandoListaCompra: boolean = false;
+
+  recetasCompletas: Array<any & { esFavorita?: boolean }> = [];
+  recetasFavoritasLista: any[] = [];
+  recetasCompartidasLista: any[] = [];
+  detalleRecetaVisible: boolean = false;
+  recetaSeleccionada: any | null = null;
+  ingredientesDetalle: any[] = [];
+  pasosDetalle: string[] = [];
+  editandoReceta: boolean = false;
+  formReceta: {
+    id: number | null;
+    titulo: string;
+    descripcion: string;
+    url_imagen: string;
+    ingredientes: any[];
+    pasos: string;
+    predeterminada: boolean;
+    compartida: boolean;
+  } = {
+    id: null,
+    titulo: '',
+    descripcion: '',
+    url_imagen: '',
+    ingredientes: [],
+    pasos: '',
+    predeterminada: false,
+    compartida: false,
+  };
+
+  mostrarIAInput: boolean = false;
+  buscandoIngredientes: boolean = false;
+  queryIngredientes: string = '';
+  resultadosIngredientes: any[] = [];
+  modalRecetaAbierto: boolean = false;
+  creandoReceta: boolean = false;
+  formRecetaCrea = {
+    titulo: '',
+    descripcion: '',
+    urlimagen: '',
+    ingredientes: [] as {nombre: string, cantidad: string, idProducto?: number}[],
+    pasos: '',
+    predeterminada: false,
+    compartida: false
+  };
+
   constructor(
     private http: HttpClient,
     private scraperService: ScraperService,
@@ -113,6 +162,14 @@ export class Principal implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
+
+    const auth = getAuth();
+    await new Promise<void>((resolve) => {
+      const unsub = auth.onAuthStateChanged((user) => {
+        unsub();
+        resolve();
+      });
+    });
 
     const res = await this.getUserRoleAsync();
     this.userRole = res.rol;
@@ -141,6 +198,10 @@ export class Principal implements OnInit {
     await this.cargarSeleccionesBD();
     await this.cargarTodosProductos();
     await this.cargarHistorialBusquedas();
+    this.listaCompraDiaSeleccionado = this.fechaActual;
+    await this.cargarListaCompraDia(this.fechaActual);
+    await this.cargarRecetasFavoritas();
+    await this.cargarRecetasCompartidas();
   }
 
   async cargarUsuarios() {
@@ -195,7 +256,7 @@ export class Principal implements OnInit {
   private async cambiarPasswordEnFirebase(email: string, passwordActual: string, nuevaPassword: string) {
     const auth = getAuth();
     const user = auth.currentUser;
-    
+
     if (!user) {
       throw new Error('No hay usuario autenticado');
     }
@@ -210,7 +271,7 @@ export class Principal implements OnInit {
 
     this.cargando = true;
     this.mensajeUsuario = '';
-    
+
     try {
       const esPropio = !this.editandoUid || this.editandoUid === this.uid_firebase;
 
@@ -496,19 +557,6 @@ export class Principal implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  async cargarRecetasUsuario() {
-    try {
-      const recetas = await firstValueFrom(
-        this.http.get<any[]>(`${this.backendUrl}/recetas?uid_firebase=${this.uid_firebase}`, {
-          headers: { Authorization: `Bearer ${this.token}` }
-        })
-      );
-      this.recetasDisponibles = recetas.map(r => ({ id: r.id, titulo: r.titulo }));
-    } catch (err) {
-      this.recetasDisponibles = [];
-    }
-  }
-
   async cargarSeleccionesBD() {
     try {
       const datos: any = await firstValueFrom(
@@ -607,31 +655,6 @@ export class Principal implements OnInit {
       })
     );
   }
-  async guardarTodoCalendario() {
-    const peticiones = [];
-    for (const fecha in this.seleccionesRecetasPorDia) {
-      const selec = this.seleccionesRecetasPorDia[fecha];
-      const payload = {
-        uid_firebase: this.uid_firebase,
-        fecha: fecha,
-        desayuno: selec.desayuno || null,
-        comida: selec.comida || null,
-        cena: selec.cena || null
-      };
-
-      peticiones.push(this.http.post(
-        `${this.backendUrl}/calendario/crear-actualizar`,
-        payload,
-        { headers: { Authorization: `Bearer ${this.token}` } }
-      ).toPromise());
-    }
-    try {
-      await Promise.all(peticiones);
-      this.mensajeScraper = 'Calendario guardado correctamente.';
-    } catch (e) {
-      this.mensajeScraper = 'Error al guardar el calendario.';
-    }
-  }
 
   async buscarProductos() {
     this.buscador = this.inputBusquedaValue.trim();
@@ -720,8 +743,19 @@ export class Principal implements OnInit {
 
   async getUserRoleAsync(): Promise<{ rol: string | null }> {
     try {
-      const user = await getAuth().currentUser;
-      const token = user ? await user.getIdToken() : '';
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) {
+        console.warn('getUserRoleAsync: no hay usuario de Firebase aún');
+        return { rol: null };
+      }
+
+      const token = await user.getIdToken();
+      if (!token) {
+        console.warn('getUserRoleAsync: token vacío');
+        return { rol: null };
+      }
+
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
       const perfil = await firstValueFrom(
         this.http.get<any>(`${this.backendUrl}/usuarios/perfil`, { headers })
@@ -738,7 +772,7 @@ export class Principal implements OnInit {
       };
 
       return { rol: perfil.rol };
-      
+
     } catch (error) {
       console.error('Error getUserRole:', error);
       return { rol: null };
@@ -766,5 +800,745 @@ export class Principal implements OnInit {
     if (this.paginaActiva < this.totalPaginas) {
       this.paginaActiva++;
     }
+  }
+
+  async cargarListaCompraDia(fecha: string) {
+    this.cargandoListaCompra = true;
+    this.listaCompraDiaSeleccionado = fecha;
+    try {
+      this.listaCompraDatos = await firstValueFrom(
+        this.http.get<any[]>(`${this.backendUrl}/lista-compra?uid_firebase=${this.uid_firebase}`, {
+          headers: { Authorization: `Bearer ${this.token}` },
+          params: { fecha }
+        })
+      );
+    } catch (error) {
+      this.listaCompraDatos = [];
+      console.error('Error cargando lista compra día:', error);
+    } finally {
+      this.cargandoListaCompra = false;
+    }
+  }
+
+  async cargarListaCompraSemana(semanaOffset: number) {
+    this.cargandoListaCompra = true;
+    this.listaCompraSemanaSeleccionada = semanaOffset;
+    try {
+      //calculo fechas de la semana
+      const hoy = new Date();
+      const diaSemana = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1;
+      const primerDiaSemana = new Date(hoy);
+      primerDiaSemana.setDate(hoy.getDate() - diaSemana - (semanaOffset * 7));
+      const ultimoDiaSemana = new Date(primerDiaSemana);
+      ultimoDiaSemana.setDate(primerDiaSemana.getDate() + 6);
+
+      const fechaInicio = primerDiaSemana.toISOString().slice(0, 10);
+      const fechaFin = ultimoDiaSemana.toISOString().slice(0, 10);
+
+      this.listaCompraDatos = await firstValueFrom(
+        this.http.get<any[]>(`${this.backendUrl}/lista-compra?uid_firebase=${this.uid_firebase}`, {
+          headers: { Authorization: `Bearer ${this.token}` },
+          params: { fecha_inicio: fechaInicio, fecha_fin: fechaFin }
+        })
+      );
+    } catch (error) {
+      this.listaCompraDatos = [];
+      console.error('Error cargando lista compra semana:', error);
+    } finally {
+      this.cargandoListaCompra = false;
+    }
+  }
+
+  cambiarVistaListaCompra(vista: 'dia' | 'semana') {
+    this.vistaListaCompra = vista;
+    if (vista === 'dia') {
+      this.cargarListaCompraDia(this.fechaActual);
+    } else {
+      this.cargarListaCompraSemana(0);
+    }
+  }
+
+  cambiarDiaListaCompra(fecha: string) {
+    this.cargarListaCompraDia(fecha);
+  }
+
+  cambiarSemanaListaCompra(offset: number) {
+    this.cargarListaCompraSemana(offset);
+  }
+
+  getFechaInicioSemana(offset: number): Date {
+    const hoy = new Date();
+    const diaSemana = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1;
+    const primerDia = new Date(hoy);
+    primerDia.setDate(hoy.getDate() - diaSemana - (offset * 7));
+    return primerDia;
+  }
+
+  getFechaFinSemana(offset: number): Date {
+    const inicio = this.getFechaInicioSemana(offset);
+    const fin = new Date(inicio);
+    fin.setDate(inicio.getDate() + 6);
+    return fin;
+  }
+
+  async cargarRecetasUsuario() {
+    try {
+      const [recetas, favoritas] = await Promise.all([
+        firstValueFrom(
+          this.http.get<any[]>(`${this.backendUrl}/recetas?uid_firebase=${this.uid_firebase}`, {
+            headers: { Authorization: `Bearer ${this.token}` }
+          })
+        ),
+        firstValueFrom(
+          this.http.get<any[]>(`${this.backendUrl}/favoritas`, {
+            params: { uid_firebase: this.uid_firebase },
+            headers: { Authorization: `Bearer ${this.token}` }
+          })
+        ),
+      ]);
+
+      const idsFavoritas = new Set(favoritas.map(r => r.id));
+
+      //base única de recetas
+      this.recetasCompletas = recetas.map(r => ({
+        ...r,
+        esFavorita: idsFavoritas.has(r.id),
+      }));
+
+      this.recetasFavoritasLista = this.recetasCompletas.filter(r => r.esFavorita);
+      this.recetasDisponibles = this.recetasCompletas.map(r => ({ id: r.id, titulo: r.titulo }));
+      this.recetasCompartidasLista = this.recetasCompletas.filter(r => r.compartida);
+    } catch (err) {
+      console.error('Error cargando recetas/favoritas:', err);
+      this.recetasCompletas = [];
+      this.recetasFavoritasLista = [];
+      this.recetasCompartidasLista = [];
+      this.recetasDisponibles = [];
+    }
+  }
+
+  editarReceta(receta: any): void {
+    this.recetaSeleccionada = receta;
+
+    //Parseo ingredientes a array
+    try {
+      const limpio = this.sanitizeIngredientesJson(receta.ingredientes);
+      const ingredientes = JSON.parse(limpio);
+
+      //adapto al formato del formulario
+      this.formRecetaCrea.ingredientes = ingredientes.map((ing: any) => ({
+        nombre: String(ing.nombre ?? '').trim(),
+        cantidad: ing.cantidad ? String(ing.cantidad).trim() : '',
+        idProducto: ing.idProducto ?? undefined,
+      }));
+    } catch {
+      this.formRecetaCrea.ingredientes = [];
+    }
+
+    //relleno resto de campos
+    this.formRecetaCrea = {
+      ...this.formRecetaCrea,
+      titulo: receta.titulo || '',
+      descripcion: receta.descripcion || '',
+      urlimagen: receta.urlimagen || '',
+      pasos: receta.pasos || '',
+      predeterminada: receta.predeterminada || false,
+      compartida: receta.compartida || false,
+    };
+
+    this.creandoReceta = false;
+    this.modalRecetaAbierto = true;
+    this.editandoReceta = true;
+    this.queryIngredientes = '';
+    this.resultadosIngredientes = [];
+  }
+
+  async guardarRecetaEditada() {
+    if (!this.recetaSeleccionada?.id) return;
+
+    const payload: any = {
+      titulo: this.formRecetaCrea.titulo,
+      descripcion: this.formRecetaCrea.descripcion,
+      urlimagen: this.formRecetaCrea.urlimagen,
+      pasos: this.formRecetaCrea.pasos,
+      ingredientes: this.formRecetaCrea.ingredientes,
+      compartida: this.formRecetaCrea.compartida,
+    };
+
+    if (this.userRole === 'admin') {
+      payload.predeterminada = this.formRecetaCrea.predeterminada;
+    }
+
+
+    try {
+      const res = await firstValueFrom(
+        this.http.patch<any>(`${this.backendUrl}/recetas/${this.recetaSeleccionada.id}`, payload, {
+          headers: { Authorization: `Bearer ${this.token}` },
+        })
+      );
+
+      //actualizo receta en memoria
+      const idx = this.recetasCompletas.findIndex(
+        r => r.id === this.recetaSeleccionada.id
+      );
+      if (idx !== -1) {
+        this.recetasCompletas[idx] = {
+          ...this.recetasCompletas[idx],
+          ...res,
+          ingredientes: res.ingredientes,
+        };
+      }
+
+      this.recetasFavoritasLista = this.recetasCompletas.filter(r => r.esFavorita);
+      this.recetasCompartidasLista = this.recetasCompletas.filter(r => r.compartida);
+      this.recetasDisponibles = this.recetasCompletas.map(r => ({
+        id: r.id,
+        titulo: r.titulo,
+      }));
+
+      this.cerrarModalReceta();
+    } catch (e: any) {
+      console.error('Error guardando receta', e);
+      alert(e?.error?.message || 'No se pudo guardar la receta.');
+    }
+  }
+
+  async eliminarReceta(receta: any) {
+    try {
+      await firstValueFrom(
+        this.http.delete(`${this.backendUrl}/recetas/${receta.id}`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+
+      this.recetasCompletas = this.recetasCompletas.filter(r => r.id !== receta.id);
+      this.recetasFavoritasLista = this.recetasCompletas.filter(r => r.esFavorita);
+      this.recetasCompartidasLista = this.recetasCompletas.filter(r => r.compartida);
+      this.recetasDisponibles = this.recetasCompletas.map(r => ({ id: r.id, titulo: r.titulo }));
+
+      if (this.recetaSeleccionada && this.recetaSeleccionada.id === receta.id) {
+        this.cerrarDetalleReceta();
+      }
+
+    } catch (e: any) {
+      console.error('Error eliminando receta:', e);
+      alert(e.error?.message || 'No se pudo eliminar la receta.');
+    }
+  }
+
+  async togglePredeterminada(receta: any) {
+    if (this.userRole !== 'admin') return;
+
+    const url = `${this.backendUrl}/recetas/${receta.id}`;
+    const payload = { predeterminada: !receta.predeterminada };
+
+    try {
+      const res = await firstValueFrom(
+        this.http.patch<any>(url, payload, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+      receta.predeterminada = res.predeterminada;
+    } catch (e: any) {
+      console.error('Error cambiando predeterminada:', e);
+      alert(e.error?.message || 'No se pudo cambiar el estado predeterminado.');
+    }
+  }
+
+  trackByRecetaId(index: number, receta: any): number {
+    return receta.id;
+  }
+
+  private sanitizeIngredientesJson(ingredientesJson: string): string {
+    if (!ingredientesJson) return '[]';
+    return ingredientesJson.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+  }
+
+  getPrimerosIngredientes(ingredientesJson: string): any[] {
+    try {
+      const limpio = this.sanitizeIngredientesJson(ingredientesJson);
+      const ingredientes = JSON.parse(limpio || '[]');
+      return ingredientes.slice(0, 3);
+    } catch (error) {
+      console.error('Error parseando ingredientes:', error, ingredientesJson);
+      return [];
+    }
+  }
+
+  getTotalIngredientes(ingredientesJson: string): number {
+    try {
+      const limpio = this.sanitizeIngredientesJson(ingredientesJson);
+      return JSON.parse(limpio || '[]').length;
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  onImageError(event: any): void {
+    event.target.src = this.noDisponibleImg;
+  }
+
+  async cargarRecetasFavoritas() {
+    try {
+      const favoritas = await firstValueFrom(
+        this.http.get<any[]>(`${this.backendUrl}/favoritas`, {
+          params: { uid_firebase: this.uid_firebase },
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+      this.recetasFavoritasLista = favoritas;
+    } catch (err) {
+      console.error('Error cargando recetas favoritas:', err);
+      this.recetasFavoritasLista = [];
+    }
+  }
+
+  async toggleFavorita(receta: any) {
+    const url = `${this.backendUrl}/favoritas`;
+    const params = { uid_firebase: this.uid_firebase, receta_id: receta.id };
+
+    try {
+      if (receta.esFavorita) {
+        await firstValueFrom(
+          this.http.delete(url, {
+            params,
+            headers: { Authorization: `Bearer ${this.token}` },
+          })
+        );
+        receta.esFavorita = false;
+      } else {
+        await firstValueFrom(
+          this.http.post(url, null, {
+            params,
+            headers: { Authorization: `Bearer ${this.token}` },
+          })
+        );
+        receta.esFavorita = true;
+      }
+
+      const idx = this.recetasCompletas.findIndex(r => r.id === receta.id);
+      if (idx !== -1) {
+        this.recetasCompletas[idx].esFavorita = receta.esFavorita;
+      } else if (receta.esFavorita) {
+        this.recetasCompletas.push({ ...receta });
+      }
+
+      this.recetasFavoritasLista = this.recetasCompletas.filter(r => r.esFavorita);
+    } catch (e: any) {
+      console.error('Error cambiando favorita', e);
+    }
+  }
+
+  async cargarRecetasCompartidas() {
+    try {
+      this.recetasCompartidasLista = await firstValueFrom(
+        this.http.get<any[]>(`${this.backendUrl}/recetas/foro`, {
+          headers: { 'Authorization': `Bearer ${this.token}` }
+        })
+      );
+    } catch (err) {
+      console.error('Error cargando foro de recetas', err);
+      this.recetasCompartidasLista = [];
+    }
+  }
+
+  async toggleCompartida(receta: any) {
+    const url = `${this.backendUrl}/recetas/${receta.id}`;
+    const payload = { compartida: !receta.compartida };
+
+    try {
+      const res = await firstValueFrom(
+        this.http.patch<any>(url, payload, {
+          headers: { Authorization: `Bearer ${this.token}` },
+        })
+      );
+
+      receta.compartida = res.compartida;
+      this.recetasCompartidasLista = this.recetasCompletas.filter(r => r.compartida);
+    } catch (e: any) {
+      console.error('Error cambiando compartida', e);
+      alert(e?.error?.message || 'No se pudo cambiar el estado compartida.');
+    }
+  }
+
+  mostrarDetallesReceta(receta: any): void {
+    this.recetaSeleccionada = receta;
+
+    //parseo ingredientes completos
+    try {
+      const limpio = this.sanitizeIngredientesJson(receta.ingredientes);
+      this.ingredientesDetalle = JSON.parse(limpio || '[]');
+    } catch {
+      this.ingredientesDetalle = [];
+    }
+
+    //pasos que el backend guarda como texto con saltos de línea
+    if (receta.pasos) {
+      this.pasosDetalle = receta.pasos
+        .split(/\r?\n/)
+        .map((p: string) => p.trim())
+        .filter((p: string) => p.length > 0);
+    } else {
+      this.pasosDetalle = [];
+    }
+
+    this.detalleRecetaVisible = true;
+  }
+
+  cerrarDetalleReceta(): void {
+    this.detalleRecetaVisible = false;
+    this.recetaSeleccionada = null;
+    this.ingredientesDetalle = [];
+    this.pasosDetalle = [];
+    this.editandoReceta = false;
+  }
+
+  toggleIAInput() {
+    this.mostrarIAInput = !this.mostrarIAInput;
+    if (this.mostrarIAInput) {
+      this.preguntaIA = '';
+      this.respuestaIA = '';
+      this.errorIA = '';
+    }
+  }
+
+  buscarIngredientes(query: string) {
+    this.queryIngredientes = query;
+
+    if (query.length < 2) {
+      this.resultadosIngredientes = [];
+      return;
+    }
+
+    this.buscandoIngredientes = true;
+    this.inputBusquedaValue = query;
+    this.buscarProductos()
+      .then(() => {
+        this.resultadosIngredientes = (this.resultadosBuscador || []).slice(0, 6).map((p: any) => ({
+          id_producto: p.Id ?? p.id ?? p.id_producto,
+          nombre: p.Nombre,
+          precio: p.Precio,
+          supermercado: p.Supermercado,
+        }));
+      })
+      .finally(() => {
+        this.buscandoIngredientes = false;
+      });
+  }
+
+  seleccionarIngrediente(producto: any) {
+    if (!producto) return;
+
+    this.formRecetaCrea.ingredientes.push({
+      nombre: producto.nombre,
+      cantidad: '',
+      idProducto: producto.id_producto,
+    });
+
+    this.queryIngredientes = '';
+    this.resultadosIngredientes = [];
+  }
+
+  anadirIngredienteManual() {
+    this.formRecetaCrea.ingredientes.push({ nombre: '', cantidad: '' });
+  }
+
+  removerIngrediente(index: number) {
+    this.formRecetaCrea.ingredientes.splice(index, 1);
+  }
+
+  abrirCrearReceta() {
+    this.formRecetaCrea = {
+      titulo: '', descripcion: '', urlimagen: '',
+      ingredientes: [],
+      pasos: '', predeterminada: false, compartida: false
+    };
+    this.creandoReceta = true;
+    this.modalRecetaAbierto = true;
+    this.queryIngredientes = '';
+    this.resultadosIngredientes = [];
+  }
+
+  async guardarNuevaReceta() {
+    if (this.cargando || !this.formRecetaCrea.titulo.trim()) return;
+
+    this.cargando = true;
+
+    try {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        alert('Token no encontrado, inicia sesión de nuevo.');
+        this.router.navigate(['login']);
+        return;
+      }
+
+      const payload = {
+        uidfirebase: this.uid_firebase,
+        titulo: this.formRecetaCrea.titulo,
+        descripcion: this.formRecetaCrea.descripcion || '',
+        urlimagen: this.formRecetaCrea.urlimagen || '',
+        ingredientes: this.formRecetaCrea.ingredientes,
+        pasos: this.formRecetaCrea.pasos || '',
+        predeterminada: this.formRecetaCrea.predeterminada,
+        compartida: this.formRecetaCrea.compartida,
+      };
+
+      console.log('Payload creación receta:', payload);
+
+
+      const res = await firstValueFrom(
+        this.http.post<any>(
+          `${this.backendUrl}/recetas`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+      );
+
+      console.log('Respuesta creación receta:', res);
+
+      this.recetasCompletas.unshift({ ...res, esFavorita: false });
+      this.cerrarModalReceta();
+      await this.cargarRecetasUsuario();
+
+    } catch (e: any) {
+      console.error('Error al crear receta (detalle):', e);
+      console.error('Error.body:', e?.error);
+      alert(e?.error?.message || e?.message || 'Error al crear receta');
+    } finally {
+      this.cargando = false;
+    }
+  }
+
+  cerrarModalReceta() {
+    this.modalRecetaAbierto = false;
+    this.creandoReceta = false;
+    this.editandoReceta = false;
+    this.queryIngredientes = '';
+    this.resultadosIngredientes = [];
+    this.formRecetaCrea = {
+      titulo: '',
+      descripcion: '',
+      urlimagen: '',
+      ingredientes: [],
+      pasos: '',
+      predeterminada: false,
+      compartida: false,
+    };
+  }
+
+  private componerCantidad(ing: any): string {
+    const cantidad = ing.cantidad ? String(ing.cantidad).trim() : '';
+    const unidad = ing.unidad ? String(ing.unidad).trim() : '';
+    if (cantidad && unidad) return `${cantidad} ${unidad}`;
+    if (cantidad) return cantidad;
+    if (unidad) return unidad;
+    return '';
+  }
+
+  //convierto la respuesta de IA en una receta editable
+  usarRespuestaIAComoReceta() {
+    if (!this.respuestaIA) return;
+
+    const texto = this.respuestaIA as string;
+
+    let titulo = 'Receta IA';
+    const matchTitulo = texto.match(/Nombre del plato\s*:\s*(.+)/i);
+    if (matchTitulo && matchTitulo[1]) {
+      titulo = matchTitulo[1].trim();
+    }
+
+    let descripcion = '';
+    const matchDescripcion = texto.match(/Descripción:\s*([\s\S]*?)\n\s*Ingredientes\s*\(JSON\)\s*:/i);
+    if (matchDescripcion && matchDescripcion[1]) {
+      descripcion = matchDescripcion[1].trim();
+    }
+
+    let urlimagen = '';
+    const matchUrl = texto.match(/https?:\/\/\S+/i);
+    if (matchUrl) {
+      urlimagen = matchUrl[0].trim();
+    }
+
+    let ingredientes: any[] = [];
+    const matchJson = texto.match(/\[\s*{[\s\S]*?}\s*\]/);
+    if (matchJson) {
+      try {
+        ingredientes = JSON.parse(matchJson[0]);
+      } catch {
+        ingredientes = [];
+      }
+    }
+
+    const ingredientesNormalizados = ingredientes
+      .map((ing: any) => ({
+        nombre: String(ing.nombre ?? '').trim(),
+        cantidad: this.componerCantidad(ing),
+        idProducto: undefined,
+      }))
+      .filter((ing: any) => ing.nombre);
+
+    let pasos = '';
+    const idxPrep = texto.toLowerCase().indexOf('preparación:');
+    if (idxPrep !== -1) {
+      pasos = texto.substring(idxPrep + 'preparación:'.length).trim();
+    }
+
+    this.formRecetaCrea = {
+      titulo,
+      descripcion,
+      urlimagen,
+      ingredientes: ingredientesNormalizados,
+      pasos,
+      predeterminada: false,
+      compartida: false,
+    };
+
+    this.creandoReceta = true;
+    this.modalRecetaAbierto = true;
+    this.queryIngredientes = '';
+    this.resultadosIngredientes = [];
+  }
+
+  getRecetasDiaSemana(fecha: Date): any[] {
+    if (!fecha) return [];
+    const fechaKey = fecha.toISOString().slice(0, 10);
+    const selec = this.seleccionesRecetasPorDia[fechaKey];
+    if (!selec) return [];
+
+    const ids: number[] = [];
+    if (selec.desayuno) ids.push(selec.desayuno);
+    if (selec.comida) ids.push(selec.comida);
+    if (selec.cena) ids.push(selec.cena);
+
+    return this.recetasCompletas.filter(r => ids.includes(r.id));
+  }
+
+  //devuelve un string tipo "pollo, arroz, tomate" a partir del JSON de ingredientes
+  getIngredientesResumen(ingredientesJson: string): string {
+    const primeros = this.getPrimerosIngredientes(ingredientesJson);
+    if (!primeros || primeros.length === 0) return 'Sin ingredientes';
+    return primeros.map((ing: any) => ing.nombre).join(', ');
+  }
+
+  getTipoComidaResumen(fecha: Date, recetaId: number): string {
+    if (!fecha) return '';
+    const fechaKey = fecha.toISOString().slice(0, 10);
+    const selec = this.seleccionesRecetasPorDia[fechaKey];
+    if (!selec) return '';
+
+    const tipos: string[] = [];
+    if (selec.desayuno === recetaId) tipos.push('Desayuno');
+    if (selec.comida === recetaId) tipos.push('Comida');
+    if (selec.cena === recetaId) tipos.push('Cena');
+
+    return tipos.join(' · ');
+  }
+
+  abrirDetalleDesdeResumen(receta: any, fecha: Date): void {
+    this.mostrarDetallesReceta(receta);
+  }
+
+  getRecetaPorTipo(fecha: Date, tipo: 'desayuno' | 'comida' | 'cena'): any | null {
+    if (!fecha) return null;
+    const fechaKey = fecha.toISOString().slice(0, 10);
+    const selec = this.seleccionesRecetasPorDia[fechaKey];
+    if (!selec || !selec[tipo]) return null;
+
+    const id = selec[tipo];
+    return this.recetasCompletas.find(r => r.id === id) || null;
+  }
+
+  async anadirProductoListaCompra(event: Event, prod: any) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    console.log('Producto recibido en anadirProductoListaCompra:', prod);
+
+    const idProducto = prod.Id ?? prod.id ?? prod.id_producto;
+
+    const body = {
+      fecha: this.fechaActual,
+      id_producto: String(idProducto),
+      nombre_producto: prod.Nombre,
+      precio: String(prod.Precio),
+      supermercado: prod.Supermercado,
+      cantidad: 1,
+    };
+
+    console.log('POST /lista-compra body:', body);
+
+    try {
+      await firstValueFrom(
+        this.http.post<any>(`${this.backendUrl}/lista-compra`, body, {
+          headers: { Authorization: `Bearer ${this.token}` },
+        })
+      );
+      await this.cargarListaCompraDia(this.fechaActual);
+    } catch (error) {
+      console.error('Error añadiendo producto a la lista de la compra', error);
+      this.alert('No se pudo añadir el producto a la lista de la compra.');
+    }
+  }
+
+
+
+  async eliminarItemListaCompra(id: number) {
+    if (!confirm('¿Eliminar este producto de la lista de la compra?')) return;
+    try {
+      await firstValueFrom(
+        this.http.delete(`${this.backendUrl}/lista-compra/${id}`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+      );
+
+      this.listaCompraDatos = this.listaCompraDatos.filter(item => item.id !== id);
+
+    } catch (error) {
+      console.error('Error eliminando elemento de la lista de la compra:', error);
+      this.alert('No se pudo eliminar el elemento de la lista de la compra.');
+    }
+  }
+
+  async actualizarCantidadListaCompra(itemId: number, nuevaCantidad: number) {
+    try {
+      await firstValueFrom(
+        this.http.patch(
+          `${this.backendUrl}/lista-compra/${itemId}`,
+          { cantidad: nuevaCantidad },
+          { headers: { Authorization: `Bearer ${this.token}` } }
+        )
+      );
+
+      //actualizo en memoria
+      const item = this.listaCompraDatos.find(i => i.id === itemId);
+      if (item) {
+        item.cantidad = nuevaCantidad;
+      }
+
+    } catch (error) {
+      console.error('Error actualizando cantidad en lista de la compra:', error);
+      this.alert('No se pudo actualizar la cantidad del producto.');
+    }
+  }
+
+  cambiarCantidadItem(item: any, delta: number) {
+    const nuevaCantidad = (item.cantidad || 0) + delta;
+
+    //si baja a 0, lo elimino directamente
+    if (nuevaCantidad <= 0) {
+      this.eliminarItemListaCompra(item.id);
+      return;
+    }
+
+    this.actualizarCantidadListaCompra(item.id, nuevaCantidad);
+  }
+
+  onClickCompartir(receta: any): void {
+    console.log('CLICK COMPARTIR', receta.id, receta.uid_firebase, this.uid_firebase);
+    this.toggleCompartida(receta);
   }
 }

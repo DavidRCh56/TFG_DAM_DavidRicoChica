@@ -43,6 +43,7 @@ export class RecetasService {
     }
     const receta = this.recetaRepository.create({
       ...createRecetaDto,
+      uid_firebase: userUid,
       ingredientes: JSON.stringify(createRecetaDto.ingredientes),
     });
     return this.recetaRepository.save(receta);
@@ -85,22 +86,18 @@ export class RecetasService {
       );
     }
 
-    if (updateRecetaDto.predeterminada !== undefined && userRole !== 'admin') {
-      throw new ForbiddenException(
-        'Solo administradores pueden cambiar el estado predeterminado',
-      );
+    // si no es admin, ignorar cualquier intento de tocar predeterminada
+    if (userRole !== 'admin') {
+      delete (updateRecetaDto as any).predeterminada;
     }
 
-    //esto transforma ingredientes en json, ya que lo que me devuelve la base de datos
-    //es un texto y pense en hacer esto, para luego poder hacer un buscador a la hora
-    //de añadir los ingredientes para que el prespuesto me sea mas facil,
-    //no se si lo terminare haciendo asi
     Object.assign(receta, {
       ...updateRecetaDto,
       ingredientes: updateRecetaDto.ingredientes
         ? JSON.stringify(updateRecetaDto.ingredientes)
         : receta.ingredientes,
     });
+
     return this.recetaRepository.save(receta);
   }
 
@@ -123,5 +120,22 @@ export class RecetasService {
     const result = await this.recetaRepository.delete(id);
     if (result.affected === 0)
       throw new NotFoundException('Receta no encontrada');
+  }
+
+  async findAllForum(): Promise<Receta[]> {
+    return this.recetaRepository
+      .createQueryBuilder('receta')
+      .where('receta.compartida = :compartida', { compartida: true })
+      .orderBy('receta.titulo', 'DESC')
+      .getMany();
+  }
+
+  async findAllPersonal(uid_firebase: string): Promise<Receta[]> {
+    return this.recetaRepository
+      .createQueryBuilder('receta')
+      .where('receta.uid_firebase = :uid OR receta.predeterminada = true', {
+        uid: uid_firebase,
+      })
+      .getMany();
   }
 }

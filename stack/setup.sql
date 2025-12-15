@@ -102,13 +102,13 @@ VALUES
 
 INSERT INTO recetas (uid_firebase, titulo, descripcion, ingredientes, pasos, Url_imagen, predeterminada, compartida)
 VALUES
-('E3LfTyIO1sXMawkea9aeVyzoh9E3', 'Ensalada César', 'Ensalada con pollo y croutons',
-'[{"idProducto":"5237","nombre":"Lechuga Batavia","cantidad":"200","unidad":"g"}, {"idProducto":"7413","nombre":"Pechuga de Pollo Cocida","cantidad":"150","unidad":"g"}, {"idProducto":"8504","nombre":"Picatostes Tradicionales","cantidad":"50","unidad":"g"}, {"idProducto":"9305","nombre":"Queso Parmesano Rallado","cantidad":"30","unidad":"g"}, {"idProducto":"10117","nombre":"Salsa César","cantidad":"50","unidad":"ml"}]',
+('E3LfTyIO1sXMawkea9aeVyzoh9E3', 'Ensalada Cesar', 'Ensalada con pollo y croutons',
+'[{"nombre":"Corazon de lechuga romana bandeja 1 unidad", "cantidad":"200", "unidad":"g"},{"nombre":"Filetes pechuga de pollo corte fino", "cantidad":"150", "unidad":"g"},{"nombre":"Picatostes fritos con ajo Hacendado", "cantidad":"50", "unidad":"g"},{"nombre":"Queso rallado 4 quesos Hacendado", "cantidad":"30", "unidad":"g"},{"nombre":"Salsa Cesar Hacendado", "cantidad":"50", "unidad":"ml"}]',
 '1. Lavar y picar la lechuga batavia.\n2. Añadir la pechuga de pollo troceada.\n3. Añadir picatostes tradicionales y queso parmesano rallado.\n4. Añadir la salsa César y mezclar.\n5. Servir fría.',
 'https://ia600406.us.archive.org/33/items/nano-banana-2025-11-03T11-20-49/nano-banana-2025-11-03T10-59-43-ensalada-cesar.png',
 1, 1),
 ('E3LfTyIO1sXMawkea9aeVyzoh9E3', 'Tortilla de patatas', 'Tortilla tradicional española',
-'[{"idProducto":"6432","nombre":"Patata Larga Nacional","cantidad":"300","unidad":"g"}, {"idProducto":"6112","nombre":"Huevo L de Caserío","cantidad":"4","unidad":"uds"}, {"idProducto":"7120","nombre":"Cebolla blanca","cantidad":"100","unidad":"g"}, {"idProducto":"5337","nombre":"Aceite de Oliva Hacendado","cantidad":"50","unidad":"ml"}, {"idProducto":"9999","nombre":"Sal","cantidad":"al gusto","unidad":""}]',
+'[{"nombre":"Patata", "cantidad":"300", "unidad":"g"},{"nombre":"Huevos camperos categoria A clase M/L Dia bandeja 10 unidades", "cantidad":"4", "unidad":"uds"},{"nombre":"Cebolla dulce granel 1.1 Kg", "cantidad":"100", "unidad":"g"},{"nombre":"Aceite de oliva suave Carbonell botella 1 l", "cantidad":"50", "unidad":"ml"},{"nombre":"Sal fina Hacendado", "cantidad":"al gusto", "unidad":""}]',
 '1. Pelar y cortar las patatas en rodajas finas.\n2. Cortar la cebolla en juliana.\n3. Freír patatas y cebolla en aceite de oliva hasta que estén tiernas.\n4. Batir los huevos y mezclar con patatas y cebolla.\n5. Verter la mezcla en la sartén y cocinar a fuego medio.\n6. Dar la vuelta a la tortilla y cocinar hasta que esté dorada.\n7. Añadir sal al gusto.\n8. Servir caliente.',
 'https://archive.org/download/nano-banana-2025-11-03T11-20-49/nano-banana-2025-11-03T11-20-49.png',
 1, 1);
