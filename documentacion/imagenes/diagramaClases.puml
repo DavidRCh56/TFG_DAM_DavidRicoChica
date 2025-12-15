@@ -1,0 +1,99 @@
+@startuml diagramaClases
+
+!theme plain
+skinparam class {
+  BackgroundColor lightblue
+  BorderColor darkblue
+  ArrowColor darkblue
+}
+
+title Diagrama de Clases - Planificador de Comidas
+
+class Producto {
+    - Id: String (PK)
+    - Nombre: String
+    - Precio: Decimal(10,2)
+    - Precio_Pack: Decimal(10,2)
+    - Formato: String
+    - Categoria: String
+    - Supermercado: String
+    - Url: Text
+    - Url_imagen: Text
+    - Favorito: Boolean
+}
+
+class Usuario {
+    - uid_firebase: String (PK)
+    - email: String (unique)
+    - nombre_usuario: String (unique)
+    - rol: Enum
+    - foto_url: Text
+}
+
+enum Rol {
+    cliente
+    admin
+}
+
+class Receta {
+    - id: Integer (PK, auto)
+    - uid_firebase: String (FK)
+    - titulo: String
+    - descripcion: Text
+    - ingredientes: Text (JSON)
+    - pasos: Text
+    - Url_imagen: Text
+    - predeterminada: Boolean
+    - compartida: Boolean
+}
+
+class RecetaFavorita {
+    - uid_firebase: String (PK, FK)
+    - receta_id: Integer (PK, FK)
+}
+
+class Calendario {
+    - id: Integer (PK, auto)
+    - uid_firebase: String (FK)
+    - fecha: Date (unique/uid)
+    - desayuno: Integer (FK Receta?)
+    - comida: Integer (FK Receta?)
+    - cena: Integer (FK Receta?)
+}
+
+class ListaCompra {
+    - id: Integer (PK, auto)
+    - uid_firebase: String (FK)
+    - fecha: Date
+    - id_producto: String (FK)
+    - nombre_producto: String
+    - precio: Decimal(10,2)
+    - supermercado: String
+    - cantidad: Integer
+}
+
+class HistorialBusqueda {
+    - id: Integer (PK, auto)
+    - uid_firebase: String (FK)
+    - termino_busqueda: String
+}
+
+' Relaciones principales
+Usuario ||--o{ Receta : "crea"
+Usuario ||--o{ RecetaFavorita : "marca como favorita"
+Receta ||--o{ RecetaFavorita : "es favorita de"
+Usuario ||--o{ Calendario : "planifica"
+Receta }o--|| Calendario : "se asigna (desayuno/comida/cena)"
+Usuario ||--o{ ListaCompra : "genera"
+Producto ||--o{ ListaCompra : "incluye"
+Usuario ||--o{ HistorialBusqueda : "busca"
+
+Usuario --> Rol : "tiene"
+
+note right of ListaCompra
+  Auto-generada por n8n:
+  Calendario → parseo ingredientes
+  → matching Producto → INSERT
+end note
+
+@enduml

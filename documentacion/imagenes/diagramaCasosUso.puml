@@ -1,0 +1,56 @@
+@startuml casosDeUso
+
+actor "Cliente" as cliente
+actor "Administrador" as admin <<extends cliente>>
+
+rectangle "Sistema" {
+  usecase "Login/Register/Logout" as Auth
+  usecase "Validación RBAC" as RBAC
+  usecase "Ver Resumen Semanal" as Resumen
+  usecase "Ver Calendario Mensual" as Calendario
+  usecase "Asignar Recetas Día" as Asignar
+  usecase "Lista Compra n8n Auto" as ListaCompra
+  usecase "Ver/Editar Lista Compra" as EditarLista
+  usecase "Buscar Productos" as Buscar
+  usecase "Gestionar Historial Búsquedas" as Historial
+  usecase "CRUD Recetas" as CRUD
+  usecase "CRUD Recetas Predet/Admin" as CRUDAdmin
+  usecase "Favoritas/Foro Compartidas" as FavoritasForo
+  usecase "Gestión Usuarios Completa" as GestionUsuarios
+  usecase "Ejecutar Scraper Precios" as Scraper
+  usecase "IA Generar Receta" as IAGenerar
+}
+
+cliente --> Auth
+cliente --> Resumen
+cliente --> Calendario
+cliente --> Buscar
+cliente --> CRUD
+cliente --> FavoritasForo
+cliente --> EditarLista
+
+admin --> CRUDAdmin
+admin --> GestionUsuarios
+admin --> Scraper
+
+Auth ..> RBAC : <<include>>
+Resumen ..> Calendario : <<extend>>
+Calendario ..> Asignar : <<include>>
+Asignar ..> ListaCompra : <<include>>
+Buscar ..> Historial : <<extend>>
+CRUD ..> FavoritasForo : <<extend>>
+GestionUsuarios ..> RBAC : <<include>>
+CRUD ..> IAGenerar : <<extend>>
+
+note right of ListaCompra
+  n8n webhook: calendario → 
+  SQL receta → parseo JSON ingredientes
+  → matching productos DB → INSERT lista
+end note
+
+note right of Historial
+  Guardar/Ver/Eliminar búsquedas
+  Eliminar todo historial
+  Buscar desde historial
+end note
+@enduml

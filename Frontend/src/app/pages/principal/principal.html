@@ -1,0 +1,1333 @@
+<div class="flex h-screen" *ngIf="tokenValido === true">
+  <nav class="flex flex-col w-52 h-full bg-white border-r border-gray-300 p-4 items-center">
+    <div class="mb-8 flex gap-4 items-center justify-center">
+      <img src="https://ia800405.us.archive.org/15/items/logo_20251023/logo.png" alt="Logo" class="h-14 w-auto rounded-lg" />
+    </div>
+    <div class="p-4 border-b border-gray-200">
+      <div class="flex items-center space-x-3">
+        <img [src]="formulario.foto_url || usuarioSinFoto"
+            (click)="setActiveSection('gestionUsuario')"
+            alt="Mi Perfil"
+            class="h-12 w-12 rounded-full cursor-pointer hover:ring-2 hover:ring-indigo-500 transition-all" />
+        <div>
+          <p class="font-semibold text-gray-900">{{formulario.nombre_usuario}}</p>
+          <p class="text-xs text-gray-500 capitalize">{{userRole || 'cliente'}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col w-full flex-1">
+      <button
+        (click)="setActiveSection('resumenSemanal')"
+        [ngClass]="{
+          'bg-gray-300': resumenSemanal,
+          'hover:bg-gray-200': !resumenSemanal
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Resumen semanal
+      </button>
+      <button
+        (click)="setActiveSection('miCalendario')"
+        [ngClass]="{
+          'bg-gray-300': miCalendario,
+          'hover:bg-gray-200': !miCalendario
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Mi Calendario
+      </button>
+      <button
+        (click)="setActiveSection('produtos')"
+        [ngClass]="{
+          'bg-gray-300': produtos,
+          'hover:bg-gray-200': !produtos
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Productos
+      </button>
+      <button
+        (click)="setActiveSection('listaCompra')"
+        [ngClass]="{
+          'bg-gray-300': listaCompra,
+          'hover:bg-gray-200': !listaCompra
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Lista de la compra
+      </button>
+      <button
+        (click)="setActiveSection('recetas')"
+        [ngClass]="{
+          'bg-gray-300': recetas,
+          'hover:bg-gray-200': !recetas
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Recetas
+      </button>
+      <button
+        (click)="setActiveSection('recetasFavoritas')"
+        [ngClass]="{
+          'bg-gray-300': recetasFavoritas,
+          'hover:bg-gray-200': !recetasFavoritas
+        }"
+        class="w-full p-2 mb-2 rounded text-left transition"
+      >
+        Recetas Favoritas
+      </button>
+      <button
+        (click)="setActiveSection('foroRecetas')"
+        [ngClass]="{
+          'bg-gray-300': foroRecetas,
+          'hover:bg-gray-200': !foroRecetas
+        }"
+        class="w-full p-2 mb-8 rounded text-left transition"
+      >
+        Foro de Recetas
+      </button>
+      <div class="mt-auto w-full">
+        <!-- boton solo accesible para administradores -->
+        <div *ngIf="userRole === 'admin'">
+          <button
+            (click)="ejecutarScraper()"
+            [disabled]="ejecutando"
+            class="w-full mb-2 bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition"
+          >
+            {{ ejecutando ? 'Actualizando precios...' : 'Actualizar precios' }}
+          </button>
+          <div *ngIf="mensajeScraper" class="text-center mt-2 text-sm text-gray-700">
+            {{ mensajeScraper }}
+          </div>
+        </div>
+        <button
+          (click)="logout()"
+          class="w-full p-2 bg-gray-500 text-white rounded hover:bg-gray-400 transition mt-2"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </nav>
+  <main class="flex-1 p-6 bg-gray-50 overflow-auto">
+    <section *ngIf="gestionUsuario" class="p-6 max-w-7xl mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-900">Gestión de Usuarios</h2>
+      </div>
+      <div *ngIf="userRole === 'admin'" class="bg-white shadow-lg rounded-xl p-6 mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-gray-900">Todos los Usuarios</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full table-auto">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Foto</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr *ngFor="let usuario of usuarios; trackBy: trackByUid" class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img [src]="usuario.foto_url || usuarioSinFoto" alt="Foto" class="h-10 w-10 rounded-full object-cover mr-3">
+                    <span class="font-medium text-gray-900">{{usuario.nombre_usuario}}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{usuario.email}}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span>
+                    {{usuario.rol}}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <img [src]="usuario.foto_url || usuarioSinFoto" alt="Foto" class="h-8 w-8 rounded-full object-cover">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                  <button
+                    (click)="editarUsuario(usuario)"
+                    class="text-indigo-600 hover:text-indigo-900 font-medium">
+                    Editar
+                  </button>
+                  <button
+                    (click)="eliminarUsuario(usuario.uid_firebase)"
+                    class="text-red-600 hover:text-red-900 font-medium ml-2">
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="bg-white shadow-lg rounded-xl p-8 max-w-2xl mx-auto">
+        <h3 class="text-xl font-semibold mb-6 text-gray-900">
+          {{ editandoUid ? 'Editar Usuario' : 'Mis Datos' }}
+        </h3>
+        <form (ngSubmit)="guardarCambios()" class="space-y-6">
+          <div *ngIf="userRole === 'admin' && editandoUid" class="bg-gray-50 p-4 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-2">UID Firebase</label>
+            <input type="text" [(ngModel)]="formulario.uid_firebase" name="uid_firebase"
+                  class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" [(ngModel)]="formulario.email" name="email" required
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Usuario</label>
+            <input type="text" [(ngModel)]="formulario.nombre_usuario" name="nombre_usuario" required
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div *ngIf="userRole === 'admin' && editandoUid" class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Rol</label>
+              <select [(ngModel)]="formulario.rol" name="rol" required
+                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <option value="cliente">Cliente</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <ng-container *ngIf="!editandoUid">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Contraseña Actual (solo si cambias la contraseña)
+              </label>
+              <input type="password" [(ngModel)]="formulario.password_actual" name="password_actual"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Necesaria solo si cambias la contraseña">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña (opcional)</label>
+              <input type="password" [(ngModel)]="formulario.nueva_password" name="nueva_password"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Deja vacío para mantener la actual">
+            </div>
+          </ng-container>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Foto URL (opcional)</label>
+            <input type="url" [(ngModel)]="formulario.foto_url" name="foto_url"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <p *ngIf="formulario.foto_url" class="mt-2 text-sm text-gray-600">
+              Vista previa:
+              <img [src]="formulario.foto_url" [alt]="formulario.nombre_usuario"
+                  class="h-16 w-16 rounded-full object-cover inline-block ml-2 border-2 border-gray-200">
+            </p>
+          </div>
+          <div class="flex gap-4 pt-4">
+            <button type="submit"
+                    [disabled]="cargando"
+                    class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors">
+              {{ cargando ? 'Guardando...' : 'Guardar Cambios' }}
+            </button>
+            <button *ngIf="editandoUid"
+                  type="button" (click)="cancelarEdicion()"
+                  class="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg hover:bg-gray-600 focus:ring-2 focus:ring-gray-500 transition-colors font-medium">
+              Cancelar
+            </button>
+          </div>
+        </form>
+        <div *ngIf="mensajeUsuario">
+          {{mensajeUsuario}}
+        </div>
+        <button type="button"
+                (click)="eliminarMiCuenta()"
+                class="w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 font-medium transition-colors margin-top-6 mt-6">
+          Eliminar mi cuenta
+        </button>
+      </div>
+    </section>
+    <section *ngIf="resumenSemanal">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Resumen Semanal</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Recetas planificadas esta semana en tu calendario.</p>
+      </div>
+      <div class="max-w-5xl mx-auto mt-10 bg-white rounded-xl shadow">
+        <div class="px-6 py-4 flex items-center justify-between border-b">
+          <h5 class="text-xl font-semibold text-gray-900 capitalize">{{ mesActual }}</h5>
+          <span class="text-lg font-bold text-gray-600">{{ anoActual }}</span>
+        </div>
+        <div class="grid grid-cols-7 text-center text-gray-500 font-semibold py-3 border-b bg-gray-50">
+          <div *ngFor="let dia of diasSemanaNombres" class="uppercase tracking-wide">
+            {{ dia }}
+          </div>
+        </div>
+        <div class="grid grid-cols-7 divide-x divide-gray-200">
+          <div *ngFor="let d of diasSemana"
+              class="relative py-6 px-2 border-b border-r border-gray-200">
+            <div
+              class="absolute top-2 left-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-base border-2"
+              [ngClass]="d.esHoy
+                ? 'bg-blue-600 text-white border-white shadow-lg ring-2 ring-blue-600'
+                : 'bg-gray-200 text-gray-700 border-gray-300'">
+              {{ d.numero }}
+            </div>
+            <div class="flex flex-col gap-4 mt-10 min-h-32 text-xs">
+              <div>
+                <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  Desayuno
+                </p>
+                <ng-container *ngIf="getRecetaPorTipo(d.fecha, 'desayuno') as r; else sinDesayuno">
+                  <div class="bg-gray-50 border rounded-lg px-2 py-1 cursor-pointer hover:bg-blue-50"
+                      (click)="abrirDetalleDesdeResumen(r, d.fecha)">
+                    <p class="font-semibold text-xs text-gray-900 line-clamp-1">
+                      {{ r.titulo }}
+                    </p>
+                  </div>
+                </ng-container>
+                <ng-template #sinDesayuno>
+                  <p class="text-xs text-gray-400 italic">Sin receta</p>
+                </ng-template>
+              </div>
+              <div>
+                <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  Comida
+                </p>
+                <ng-container *ngIf="getRecetaPorTipo(d.fecha, 'comida') as r; else sinComida">
+                  <div class="bg-gray-50 border rounded-lg px-2 py-1 cursor-pointer hover:bg-blue-50"
+                      (click)="abrirDetalleDesdeResumen(r, d.fecha)">
+                    <p class="font-semibold text-xs text-gray-900 line-clamp-1">
+                      {{ r.titulo }}
+                    </p>
+                  </div>
+                </ng-container>
+                <ng-template #sinComida>
+                  <p class="text-xs text-gray-400 italic">Sin receta</p>
+                </ng-template>
+              </div>
+              <div>
+                <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  Cena
+                </p>
+                <ng-container *ngIf="getRecetaPorTipo(d.fecha, 'cena') as r; else sinCena">
+                  <div class="bg-gray-50 border rounded-lg px-2 py-1 cursor-pointer hover:bg-blue-50"
+                      (click)="abrirDetalleDesdeResumen(r, d.fecha)">
+                    <p class="font-semibold text-xs text-gray-900 line-clamp-1">
+                      {{ r.titulo }}
+                    </p>
+                  </div>
+                </ng-container>
+                <ng-template #sinCena>
+                  <p class="text-xs text-gray-400 italic">Sin receta</p>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section *ngIf="miCalendario">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Mi Calendario</h2>
+      </div>
+      <div class="max-w-5xl mx-auto mt-6 bg-white rounded-xl shadow">
+        <div class="px-6 py-4 flex items-center justify-between border-b">
+          <div class="flex items-center gap-4">
+            <button (click)="mesAnterior()" class="p-2 rounded-full hover:bg-gray-100" aria-label="Mes anterior">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h5 class="text-xl font-semibold text-gray-900 capitalize tracking-wide">
+              {{ mesesES[mesActivo] }}
+            </h5>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-lg font-bold text-gray-700">{{ anoActivo }}</span>
+            <button (click)="mesSiguiente()" class="p-2 rounded-full hover:bg-gray-100" aria-label="Mes siguiente">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-7 text-center text-gray-500 font-semibold py-3 border-b bg-gray-50">
+          <div *ngFor="let dia of diasSemanaNombres" class="uppercase tracking-wide">
+            {{ dia }}
+          </div>
+        </div>
+        <div class="grid grid-cols-7 gap-px bg-white">
+          <ng-container *ngFor="let dia of diasDelMesArray">
+            <div *ngIf="dia.numero === 0"
+                class="bg-gray-100 border-b border-r min-h-[120px]"></div>
+            <div *ngIf="dia.numero !== 0"
+                class="relative py-6 px-2 border-b border-r border-gray-200">
+              <div
+                class="absolute top-2 left-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-base border-2"
+                [ngClass]="dia.esHoy
+                  ? 'bg-blue-600 text-white border-white shadow-lg ring-2 ring-blue-600'
+                  : 'bg-gray-200 text-gray-700 border-gray-300'">
+                {{ dia.numero }}
+              </div>
+              <div class="flex flex-col gap-2 mt-10 text-xs">
+                <ng-container *ngFor="let tipo of tiposComida">
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                      {{ tipo | titlecase }}
+                    </span>
+                    <select
+                      class="w-full text-xs p-1.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 font-medium"
+                      [(ngModel)]="seleccionesRecetasPorDia[
+                        (anoActivo + '-' + (mesActivo + 1).toString().padStart(2, '0') + '-' + dia.numero.toString().padStart(2, '0'))
+                      ][tipo]"
+                      (ngModelChange)="cambiarSeleccion(
+                        anoActivo + '-' + (mesActivo + 1).toString().padStart(2, '0') + '-' + dia.numero.toString().padStart(2, '0'),
+                        tipo,
+                        $event
+                      )">
+                      <option [ngValue]="0">Sin receta</option>
+                      <option *ngFor="let receta of recetasDisponibles" [ngValue]="receta.id">
+                        {{ receta.titulo }}
+                      </option>
+                    </select>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </section>
+    <section *ngIf="produtos">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Productos</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Artículos de los supermercados.</p>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:items-end gap-6 mt-6 mb-8 max-w-2xl">
+        <div class="flex flex-col flex-grow">
+          <label class="block mb-1 text-sm font-medium">Buscar producto</label>
+          <div class="flex w-full">
+            <input
+              class="border-r-0 rounded-l-lg border p-2 focus:outline-none flex-grow text-base"
+              [(ngModel)]="inputBusquedaValue"
+              (input)="onInputChange($event)"
+              (keydown.enter)="buscarProductos()"
+              placeholder="Buscar producto... (Enter para buscar)"
+            />
+            <button
+              (click)="buscarProductos()"
+              class="bg-blue-600 text-white px-4 rounded-r-lg hover:bg-blue-700 font-semibold text-base">
+              Buscar
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col min-w-150px">
+          <label class="block mb-1 text-sm font-medium">Filtrar por supermercado</label>
+          <select
+            [(ngModel)]="supermercado"
+            class="border rounded-lg p-2 font-semibold text-base"
+            (change)="buscarProductos()">
+            <option value="">Todos</option>
+            <option *ngFor="let s of supermercadosLista" [value]="s">
+              {{ s }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div class="lg:col-span-4">
+          <div *ngIf="buscador.trim()">
+            <div *ngIf="resultadosBuscador.length; else noResultados">
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+                <div
+                  *ngFor="let prod of resultadosBuscador"
+                  class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
+                  <img
+                    [src]="prod.Url_imagen || noDisponibleImg"
+                    [alt]="'Foto ' + prod.Nombre"
+                    class="mb-4 w-24 h-24 object-contain rounded shadow" />
+                  <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
+                  <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
+                  <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
+                  <button
+                    (click)="anadirProductoListaCompra($event, prod)"
+                    class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
+                    Añadir
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ng-template #noResultados>
+              <div class="mt-6 text-gray-400 font-medium text-center">
+                No se encontraron productos para "{{ buscador }}" en "{{ supermercado || 'ningún supermercado' }}".
+              </div>
+            </ng-template>
+          </div>
+          <div *ngIf="!buscador.trim()">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+              <div
+                *ngFor="let prod of todosProductos.slice((paginaActiva - 1) * productosPorPagina, paginaActiva * productosPorPagina)"
+                class="bg-white rounded-lg shadow hover:shadow-xl transition border flex flex-col items-center px-6 pb-6 pt-4">
+                <img
+                  [src]="prod.Url_imagen || noDisponibleImg"
+                  [alt]="'Foto ' + prod.Nombre"
+                  class="mb-4 w-24 h-24 object-contain rounded shadow" />
+                <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Nombre }}</span>
+                <span class="font-bold text-lg mb-2 text-center text-gray-900">{{ prod.Precio }} €</span>
+                <span class="text-sm text-gray-500 mb-3 font-medium">{{ prod.Supermercado }}</span>
+                <button
+                  (click)="anadirProductoListaCompra($event, prod)"
+                  class="bg-green-500 py-2 px-6 rounded-lg text-white hover:bg-green-600 font-semibold text-base mt-auto w-full shadow-sm">
+                  Añadir
+                </button>
+              </div>
+            </div>
+            <div class="flex justify-center gap-2 mt-10">
+              <button (click)="irAnterior()" [disabled]="paginaActiva <= 1">Anterior</button>
+              <span class="px-4 py-2 bg-gray-100 rounded font-medium">
+                Página {{ paginaActiva }} de {{ totalPaginas }}
+              </span>
+              <button (click)="irSiguiente()" [disabled]="paginaActiva >= totalPaginas">Siguiente</button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg shadow max-h-500px sticky top-4">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Búsquedas recientes</h3>
+            <button
+              *ngIf="historialBusquedas.length > 0"
+              (click)="eliminarTodoHistorial()"
+              class="text-red-500 hover:text-red-700 text-sm font-medium px-3 py-1 rounded hover:bg-red-50 transition">
+              Eliminar todo
+            </button>
+          </div>
+          <ul *ngIf="historialBusquedas.length > 0; else sinHistorial" class="space-y-2 max-h-64 overflow-auto">
+            <li *ngFor="let termino of historialBusquedas" class="flex items-center justify-between gap-2">
+              <button
+                (click)="inputBusquedaValue = termino.termino_busqueda; buscarProductos()"
+                class="flex-1 text-left text-blue-600 hover:underline p-2 rounded hover:bg-gray-100">
+                {{ termino.termino_busqueda }}
+              </button>
+              <button
+                (click)="eliminarBusqueda(termino.id)"
+                class="text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded-full w-6 h-6 flex items-center justify-center transition"
+                [title]="'Eliminar búsqueda #' + termino.id">
+                x
+              </button>
+            </li>
+          </ul>
+          <ng-template #sinHistorial>
+            <p class="text-gray-500 text-sm italic">No hay búsquedas recientes.</p>
+          </ng-template>
+        </div>
+      </div>
+    </section>
+    <section *ngIf="listaCompra" class="p-6">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Lista de la compra</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Artículos que necesitas comprar en tu próxima visita al supermercado.</p>
+      </div>
+      <div class="flex gap-2 mb-6">
+        <button
+          (click)="cambiarVistaListaCompra('dia')"
+          [class.bg-blue-600]="vistaListaCompra === 'dia'"
+          [class.bg-gray-200]="vistaListaCompra !== 'dia'"
+          class="px-4 py-2 rounded-lg text-white transition font-medium">
+          Ver por Día
+        </button>
+        <button
+          (click)="cambiarVistaListaCompra('semana')"
+          [class.bg-blue-600]="vistaListaCompra === 'semana'"
+          [class.bg-gray-200]="vistaListaCompra !== 'semana'"
+          class="px-4 py-2 rounded-lg text-white transition font-medium">
+          Ver por Semana
+        </button>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6 mb-6">
+        <div *ngIf="vistaListaCompra === 'dia'" class="flex items-center gap-4">
+          <label class="text-sm font-medium text-gray-700">Seleccionar día:</label>
+          <select
+            [(ngModel)]="listaCompraDiaSeleccionado"
+            (change)="cambiarDiaListaCompra(listaCompraDiaSeleccionado)"
+            class="border rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+            <option *ngFor="let dia of diasSemana"
+                    [value]="dia.fecha.toISOString().slice(0,10)"
+                    [selected]="dia.fecha.toISOString().slice(0,10) === listaCompraDiaSeleccionado">
+              {{dia.nombre}} {{dia.numero}} - {{dia.fecha.toLocaleDateString('es-ES', {weekday: 'long', month: 'short'})}}
+            </option>
+          </select>
+          <span class="text-sm text-gray-500 ml-auto">
+            {{listaCompraDiaSeleccionado}}
+          </span>
+        </div>
+        <div *ngIf="vistaListaCompra === 'semana'" class="flex items-center gap-4">
+          <label class="text-sm font-medium text-gray-700">Semana:</label>
+          <button
+            (click)="cambiarSemanaListaCompra(listaCompraSemanaSeleccionada + 1)"
+            class="p-2 rounded-full hover:bg-gray-100">
+            <-
+          </button>
+          <span class="font-semibold">
+            Semana del {{getFechaInicioSemana(listaCompraSemanaSeleccionada) | date:'dd/MM/yy'}}
+            al {{getFechaFinSemana(listaCompraSemanaSeleccionada) | date:'dd/MM/yy'}}
+          </span>
+          <button
+            (click)="cambiarSemanaListaCompra(listaCompraSemanaSeleccionada - 1)"
+            class="p-2 rounded-full hover:bg-gray-100 ml-auto">
+            ->
+          </button>
+        </div>
+      </div>
+      <div *ngIf="!cargandoListaCompra" class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="bg-gradient-to-r px-6 py-4 text-black">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-bold">
+              {{vistaListaCompra === 'dia' ? 'Lista del día' : 'Lista semanal'}}
+            </h3>
+            <div class="text-right">
+              <div class="text-2xl font-bold">{{totalListaCompra | currency:'EUR':'symbol':'1.2-2'}}</div>
+              <div class="text-sm opacity-90">
+                {{listaCompraDatos.length}} {{listaCompraDatos.length === 1 ? 'artículo' : 'artículos'}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="listaCompraDatos.length > 0" class="divide-y divide-gray-200">
+          <div *ngFor="let item of listaCompraDatos" class="p-4 hover:bg-gray-50">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div>
+                  <p class="font-semibold text-gray-900">{{item.nombre_producto}}</p>
+                  <p class="text-sm text-gray-500 flex items-center gap-2">
+                    {{item.supermercado}} *
+                    <button
+                      (click)="cambiarCantidadItem(item, -1)"
+                      class="w-6 h-6 flex items-center justify-center rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100"
+                      title="Restar 1">
+                      -
+                    </button>
+                    <span>{{item.cantidad}} uds</span>
+                    <button
+                      (click)="cambiarCantidadItem(item, 1)"
+                      class="w-6 h-6 flex items-center justify-center rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100"
+                      title="Sumar 1">
+                      +
+                    </button>
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div class="text-right">
+                  <p class="text-2xl font-bold text-gray-900">
+                    {{(item.precio * item.cantidad) | currency:'EUR':'symbol':'1.2-2'}}
+                  </p>
+                  <p class="text-sm text-gray-500">€{{item.precio | number:'1.2-2'}}/ud</p>
+                </div>
+                <button
+                  (click)="eliminarItemListaCompra(item.id)"
+                  class="ml-4 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full p-2 transition"
+                  title="Eliminar de la lista">
+                  x
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="listaCompraDatos.length === 0" class="p-12 text-center text-gray-500">
+          <p class="text-lg font-medium mb-2">No hay artículos en la lista</p>
+          <p class="text-sm">Los ingredientes aparecerán aquí cuando añadas recetas al calendario</p>
+        </div>
+      </div>
+      <div *ngIf="cargandoListaCompra" class="flex justify-center items-center py-12">
+        <div class="text-lg text-gray-500">Cargando lista de la compra...</div>
+      </div>
+    </section>
+    <section *ngIf="recetas" class="py-12">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Tus Recetas</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          Explora, organiza y descubre tus recetas favoritas y predeterminadas.
+        </p>
+      </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 p-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl shadow-xl">
+          <button
+            class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-3 text-lg"
+            (click)="toggleIAInput()">
+            {{ mostrarIAInput ? 'Cerrar IA' : 'Preguntar a IA' }}
+          </button>
+          <button
+            class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-3 text-lg"
+            (click)="abrirCrearReceta()">
+            Nueva Receta
+          </button>
+        </div>
+        <div *ngIf="mostrarIAInput" class="max-w-3xl mx-auto mb-16 p-8 bg-white rounded-3xl shadow-2xl border-2 border-purple-200">
+          <div class="flex w-full gap-4">
+            <input
+              id="ia-input"
+              [(ngModel)]="preguntaIA"
+              (keydown.enter)="enviarPreguntaIA(); $event.preventDefault()"
+              class="flex-1 p-5 rounded-3xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none text-xl placeholder-gray-500 shadow-lg"
+              [disabled]="cargandoIA"
+              placeholder="Ej: 'Receta saludable con pollo, arroz y verduras para 2 personas'">
+            <button
+              (click)="enviarPreguntaIA()"
+              class="bg-purple-600 hover:bg-purple-700 text-white px-10 py-5 rounded-3xl font-bold shadow-lg transition-all whitespace-nowrap text-lg"
+              [disabled]="cargandoIA || !preguntaIA.trim()">
+              {{ cargandoIA ? 'Consultando...' : 'Enviar a IA' }}
+            </button>
+          </div>
+          <div *ngIf="respuestaIA" class="mt-8 p-8 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl border-l-6 border-purple-400 shadow-xl">
+            <h4 class="font-bold text-2xl text-purple-800 mb-4 flex items-center gap-2">
+              Respuesta de IA:
+            </h4>
+            <div class="whitespace-pre-wrap text-gray-800 leading-relaxed text-lg">{{ respuestaIA }}</div>
+            <div class="mt-6 flex justify-end">
+              <button
+                (click)="usarRespuestaIAComoReceta()"
+                class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:from-emerald-600 hover:to-teal-700 transition-all">
+                Usar esta respuesta para crear receta
+              </button>
+            </div>
+          </div>
+          <div *ngIf="errorIA" class="mt-6 p-6 bg-red-50 border-2 border-red-200 rounded-3xl text-red-700 font-semibold">{{ errorIA }}</div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+          <article
+            *ngFor="let receta of recetasCompletas; trackBy: trackByRecetaId"
+            class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 hover:-translate-y-2 cursor-pointer"
+            (click)="mostrarDetallesReceta(receta)"
+          >
+            <div class="relative h-52 overflow-hidden bg-gray-50">
+              <img
+                [src]="receta.urlimagen || noDisponibleImg"
+                [alt]="'Receta: ' + receta.titulo"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                (error)="onImageError($event)"
+                loading="lazy"
+              />
+              <div class="absolute top-3 right-3 flex items-center gap-1 z-20">
+                <button
+                  type="button"
+                  (click)="toggleFavorita(receta); $event.stopPropagation()"
+                  class="flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-semibold shadow-md border border-amber-400 transition-colors cursor-pointer select-none"
+                  [ngClass]="receta.esFavorita
+                              ? 'bg-amber-400 text-amber-900'
+                              : 'bg-white/90 text-amber-600 hover:bg-amber-50'"
+                >
+                  <span>Favorita</span>
+                </button>
+                <button
+                  *ngIf="userRole === 'admin'; else predetSoloLectura"
+                  type="button"
+                  (click)="togglePredeterminada(receta); $event.stopPropagation()"
+                  class="px-2.5 py-1 rounded-full text-[11px] font-semibold shadow-md transition-colors cursor-pointer select-none border border-blue-500"
+                  [ngClass]="receta.predeterminada
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-white/90 text-blue-600 hover:bg-blue-50'"
+                >
+                  Predet.
+                </button>
+                <ng-template #predetSoloLectura>
+                  <span
+                    *ngIf="receta.predeterminada"
+                    class="bg-blue-600 text-white px-2.5 py-1 rounded-full text-[11px] font-semibold shadow-md"
+                  >
+                    Predet.
+                  </span>
+                </ng-template>
+                <button
+                  type="button"
+                  (click)="onClickCompartir(receta); $event.stopPropagation()"
+                  class="px-2.5 py-1 rounded-full text-[11px] font-semibold shadow-md transition-colors cursor-pointer select-none border border-green-500"
+                  [ngClass]="receta.compartida ? 'bg-green-600 text-white' : 'bg-white/90 text-green-600 hover:bg-green-50'">
+                  {{ receta.compartida ? 'Compartida' : 'Compartir' }}
+                </button>
+              </div>
+              <div
+                class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 z-10"
+              >
+                <span class="text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                  {{ getTotalIngredientes(receta.ingredientes) }} ingredientes
+                </span>
+              </div>
+            </div>
+            <div class="p-5 flex flex-col h-full">
+              <div class="mb-3">
+                <h3 class="text-base font-semibold text-gray-900 leading-snug mb-1 group-hover:text-blue-600 transition-colors">
+                  {{ receta.titulo }}
+                </h3>
+                <p class="text-sm text-gray-600 line-clamp-2">
+                  {{ receta.descripcion }}
+                </p>
+              </div>
+              <div class="border-t border-gray-100 my-3"></div>
+              <div class="mb-4">
+                <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  Ingredientes
+                </p>
+                <div class="flex flex-wrap gap-1.5">
+                  <span
+                    *ngFor="let ing of getPrimerosIngredientes(receta.ingredientes); let i = index"
+                    class="bg-blue-50 text-blue-800 px-2 py-0.5 rounded-full text-[11px] font-medium border border-blue-100"
+                    [class]="i < 2 ? '' : 'hidden xl:inline'"
+                  >
+                    {{ ing.nombre }}
+                  </span>
+                  <span
+                    *ngIf="getTotalIngredientes(receta.ingredientes) > 3"
+                    class="bg-gray-50 text-gray-600 px-2 py-0.5 rounded-full text-[11px] font-medium border border-gray-100"
+                  >
+                    +{{ getTotalIngredientes(receta.ingredientes) - 3 }}
+                  </span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50">
+                <div class="flex gap-2">
+                  <button
+                    type="button"
+                    (click)="editarReceta(receta); $event.stopPropagation()"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg
+                          border border-blue-300 text-blue-600 bg-blue-50 hover:bg-blue-100 hover:border-blue-400
+                          shadow-sm"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    (click)="eliminarReceta(receta); $event.stopPropagation()"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg
+                          border border-red-300 text-red-600 bg-red-50 hover:bg-red-100 hover:border-red-400
+                          shadow-sm"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div *ngIf="recetasCompletas.length === 0" class="text-center py-32">
+          <div class="max-w-md mx-auto">
+            <h3 class="text-3xl font-bold text-gray-900 mb-6">¡No tienes recetas aún!</h3>
+            <p class="text-xl text-gray-600 mb-10 max-w-lg mx-auto">
+              Usa la IA para generar tu primera receta automáticamente o crea una manualmente.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-10 py-4 rounded-3xl font-bold shadow-xl hover:shadow-2xl transition-all text-lg"
+                (click)="toggleIAInput()">
+                Consultar IA
+              </button>
+              <button
+                class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-10 py-4 rounded-3xl font-bold shadow-xl hover:shadow-2xl transition-all text-lg"
+                (click)="abrirCrearReceta()">
+                Crear Manual
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div *ngIf="modalRecetaAbierto" class="fixed inset-0 bg-black/70 backdrop-blur-md z-[1000] flex items-center justify-center p-6">
+      <div class="bg-white rounded-4xl shadow-3xl max-w-5xl max-h-[95vh] w-full flex flex-col overflow-hidden">
+        <div class="p-10 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-4xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-2">
+                {{ creandoReceta ? 'Nueva Receta' : 'Editar Receta' }}
+              </h2>
+              <p class="text-2xl text-gray-600">{{ formRecetaCrea.ingredientes.length }} ingredientes añadidos</p>
+            </div>
+            <button (click)="cerrarModalReceta()" class="p-4 hover:bg-gray-200 rounded-3xl text-3xl font-bold transition-colors">x</button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-10 space-y-10">
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <label class="block text-xl font-bold text-gray-800 mb-4">Título de la receta *</label>
+              <input [(ngModel)]="formRecetaCrea.titulo"
+                    class="w-full p-6 border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-emerald-200 focus:border-emerald-400 text-2xl font-bold"
+                    placeholder="Ej: Pollo al curry cremoso con arroz basmati">
+            </div>
+            <div>
+              <label class="block text-xl font-bold text-gray-800 mb-4">Imagen (URL opcional)</label>
+              <input [(ngModel)]="formRecetaCrea.urlimagen"
+                    class="w-full p-6 border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-emerald-200"
+                    placeholder="https://ejemplo.com/imagen-receta.jpg">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xl font-bold text-gray-800 mb-4">Descripción</label>
+            <textarea [(ngModel)]="formRecetaCrea.descripcion" rows="4"
+                      class="w-full p-6 border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-emerald-200 text-lg"
+                      placeholder="Una receta deliciosa y fácil de preparar..."></textarea>
+          </div>
+          <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 rounded-4xl border-4 border-emerald-100">
+            <label class="block text-2xl font-black text-emerald-800 mb-6 flex items-center gap-3">
+              Ingredientes
+              <span class="text-lg font-semibold text-gray-600 bg-white px-4 py-2 rounded-2xl border">
+                {{ formRecetaCrea.ingredientes.length }} seleccionados
+              </span>
+            </label>
+            <div class="relative mb-8">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-20">
+                <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                [(ngModel)]="queryIngredientes"
+                (input)="buscarIngredientes(queryIngredientes)"
+                class="w-full pl-16 pr-6 py-6 border-3 border-emerald-300 rounded-3xl text-xl bg-white shadow-xl
+                      focus:ring-4 focus:ring-emerald-300 focus:border-emerald-500 transition-all"
+                [class.shadow-2xl]="buscandoIngredientes"
+                placeholder="Busca cualquier producto (jamón, arroz, tomate, aceite...)"
+                [disabled]="cargando"
+              />
+            </div>
+            <div *ngIf="resultadosIngredientes.length > 0"
+                class="max-h-64 overflow-y-auto border-2 border-emerald-200 rounded-3xl bg-white shadow-2xl mb-8">
+              <div *ngFor="let producto of resultadosIngredientes; let i = index"
+                  class="p-6 hover:bg-emerald-50 cursor-pointer border-b border-emerald-100 last:border-b-0
+                          hover:shadow-md transition-all hover:scale-[1.02]"
+                  (click)="seleccionarIngrediente(producto)">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="font-black text-xl text-gray-900 mb-1">{{ producto.nombre }}</div>
+                    <div class="text-sm text-emerald-700 font-semibold flex items-center gap-2">
+                      {{ producto.supermercado }}
+                      <span class="text-gray-600 font-normal">
+                        {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="formRecetaCrea.ingredientes.length > 0" class="space-y-4">
+            <div *ngFor="let ing of formRecetaCrea.ingredientes; let i = index"
+                class="group flex items-center gap-4 p-6 bg-gradient-to-r from-gray-50 to-emerald-50 rounded-3xl
+                        border-2 border-gray-200 hover:border-emerald-400 hover:shadow-xl transition-all">
+              <div class="flex-1 min-w-0">
+                <input
+                  [ngModel]="ing.nombre"
+                  readonly
+                  class="w-full bg-transparent p-3 outline-none text-xl font-bold text-gray-900
+                        border-b border-dashed border-gray-300 cursor-not-allowed"
+                />
+              </div>
+              <input
+                [(ngModel)]="ing.cantidad"
+                class="w-32 p-4 border-2 border-gray-300 rounded-2xl text-center text-xl font-mono font-bold"
+                placeholder="500g"
+              />
+              <button
+                (click)="removerIngrediente(i)"
+                class="p-4 text-2xl font-black text-red-500 hover:bg-red-100 hover:scale-110
+                      rounded-3xl shadow-lg transition-all w-16 h-16 flex items-center justify-center">
+                x
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-2xl font-black text-gray-800 mb-6">📋 Pasos de preparación</label>
+            <textarea [(ngModel)]="formRecetaCrea.pasos" rows="10"
+                      class="w-full p-8 border-3 border-gray-200 rounded-4xl focus:ring-4 focus:ring-emerald-200 focus:border-emerald-500 text-xl leading-relaxed font-medium"
+                      placeholder="Escribe los pasos numerados de tu receta:
+                      1. Corta el pollo en trozos medianos...
+                      2. En una sartén caliente...
+                      3. ..."></textarea>
+          </div>
+        </div>
+        <div class="p-10 border-t-4 border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50 flex gap-6 justify-end">
+          <button (click)="cerrarModalReceta()"
+                  class="px-12 py-6 border-2 border-gray-300 rounded-3xl hover:bg-gray-100 font-bold text-xl shadow-lg hover:shadow-xl transition-all">
+            Cancelar
+          </button>
+          <button
+            (click)="creandoReceta ? guardarNuevaReceta() : guardarRecetaEditada()"
+            [disabled]="!formRecetaCrea.titulo.trim() || cargando"
+            class="px-16 py-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-3xl font-black text-xl shadow-2xl hover:shadow-3xl hover:from-emerald-600 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3">
+            <span *ngIf="cargando" class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            {{ cargando
+                ? (creandoReceta ? 'Creando...' : 'Guardando...')
+                : (creandoReceta ? 'Crear Receta' : 'Guardar cambios') }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <section *ngIf="recetasFavoritas" class="py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Recetas favoritas</h2>
+          <p class="text-xl text-gray-600 max-w-2xl mx-auto">Explora y gestiona tus recetas marcadas como favoritas.</p>
+        </div>
+        <div *ngIf="recetasFavoritasLista.length > 0; else noFavoritas">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <article
+              *ngFor="let receta of recetasFavoritasLista; trackBy: trackByRecetaId"
+              class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 hover:-translate-y-2 cursor-pointer"
+              (click)="mostrarDetallesReceta(receta)"
+            >
+              <div class="relative h-52 overflow-hidden bg-gray-50">
+                <img
+                  [src]="receta.urlimagen || noDisponibleImg"
+                  [alt]="'Receta: ' + receta.titulo"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  (error)="onImageError($event)"
+                />
+                <div class="absolute top-3 right-3 flex items-center gap-1 z-20">
+                  <button
+                    type="button"
+                    (click)="toggleFavorita(receta); $event.stopPropagation()"
+                    class="flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-semibold shadow-md border border-amber-400 cursor-pointer select-none"
+                    [ngClass]="receta.esFavorita
+                                ? 'bg-amber-400 text-amber-900'
+                                : 'bg-white/90 text-amber-600 hover:bg-amber-50'"
+                  >
+                    <span>Favorita</span>
+                  </button>
+                </div>
+              </div>
+              <div class="p-5 flex flex-col h-full">
+                <div class="mb-3">
+                  <h3 class="text-base font-semibold text-gray-900 leading-snug mb-1">
+                    {{ receta.titulo }}
+                  </h3>
+                  <p class="text-sm text-gray-600 line-clamp-2">
+                    {{ receta.descripcion }}
+                  </p>
+                </div>
+                <div class="border-t border-gray-100 my-3"></div>
+                <div class="mb-4">
+                  <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                    Ingredientes
+                  </p>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span
+                      *ngFor="let ing of getPrimerosIngredientes(receta.ingredientes); let i = index"
+                      class="bg-blue-50 text-blue-800 px-2 py-0.5 rounded-full text-[11px] font-medium border border-blue-100"
+                      [class]="i < 2 ? '' : 'hidden xl:inline'"
+                    >
+                      {{ ing.nombre }}
+                    </span>
+                    <span
+                      *ngIf="getTotalIngredientes(receta.ingredientes) > 3"
+                      class="bg-gray-50 text-gray-600 px-2 py-0.5 rounded-full text-[11px] font-medium border border-gray-100"
+                    >
+                      +{{ getTotalIngredientes(receta.ingredientes) - 3 }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+        <ng-template #noFavoritas>
+          <div class="text-center py-10 text-gray-500">
+            Aún no tienes recetas marcadas como favoritas.
+          </div>
+        </ng-template>
+      </div>
+    </section>
+    <section *ngIf="foroRecetas" class="py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Foro de Recetas</h2>
+          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            Participa en la comunidad compartiendo y descubriendo recetas públicas de otros usuarios.
+          </p>
+        </div>
+        <div *ngIf="recetasCompartidasLista.length > 0; else noCompartidas">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <article
+              *ngFor="let receta of recetasCompartidasLista; trackBy: trackByRecetaId"
+              class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-green-200 hover:-translate-y-1 cursor-pointer"
+              (click)="mostrarDetallesReceta(receta)"
+            >
+              <div class="relative h-40 overflow-hidden bg-gray-50">
+                <img
+                  [src]="receta.urlimagen || noDisponibleImg"
+                  [alt]="'Receta: ' + receta.titulo"
+                  class="w-full h-full object-cover"
+                  (error)="onImageError($event)"
+                />
+                <div class="absolute top-3 left-3 flex items-center gap-2">
+                  <button *ngIf="receta.uid_firebase === uid_firebase"
+                          (click)="toggleCompartida(receta); $event.stopPropagation()"
+                          class="px-2.5 py-1 rounded-full text-xs font-semibold border border-green-500"
+                          [ngClass]="receta.compartida ? 'bg-green-600 text-white' : 'bg-white text-green-600'">
+                    {{ receta.compartida ? 'Compartida' : 'Compartir' }}
+                  </button>
+                  <span *ngIf="receta.uid_firebase !== uid_firebase && receta.compartida"
+                        class="bg-green-600 text-white px-3 py-1 rounded-full text-[11px] font-semibold shadow-md">
+                    Compartida
+                  </span>
+                  <button
+                    type="button"
+                    (click)="toggleFavorita(receta); $event.stopPropagation()"
+                    class="flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-semibold shadow-md border border-amber-400 cursor-pointer select-none"
+                    [ngClass]="receta.esFavorita ? 'bg-amber-400 text-amber-900' : 'bg-white/90 text-amber-600 hover:bg-amber-50'">
+                    <span>Favorita</span>
+                  </button>
+                </div>
+              </div>
+              <div class="p-4 flex flex-col h-full">
+                <h3 class="text-base font-semibold text-gray-900 mb-1 line-clamp-2">
+                  {{ receta.titulo }}
+                </h3>
+                <p class="text-sm text-gray-600 line-clamp-2 mb-3">
+                  {{ receta.descripcion }}
+                </p>
+                <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  Ingredientes clave
+                </p>
+                <div class="flex flex-wrap gap-1.5 mb-4">
+                  <span
+                    *ngFor="let ing of getPrimerosIngredientes(receta.ingredientes); let i = index"
+                    class="bg-green-50 text-green-800 px-2 py-0.5 rounded-full text-[11px] font-medium border border-green-100"
+                    [class]="i < 2 ? '' : 'hidden xl:inline'"
+                  >
+                    {{ ing.nombre }}
+                  </span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+        <ng-template #noCompartidas>
+          <div class="text-center py-10 text-gray-500">
+            Aún no hay recetas compartidas en el foro.
+          </div>
+        </ng-template>
+      </div>
+    </section>
+    <div
+      *ngIf="detalleRecetaVisible && recetaSeleccionada"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-start justify-between border-b border-gray-100 px-6 py-4">
+          <div *ngIf="!editandoReceta; else headerEdicion">
+            <h2 class="text-xl font-bold text-gray-900 mb-1">
+              {{ recetaSeleccionada.titulo }}
+            </h2>
+            <p class="text-sm text-gray-500">
+              {{ recetaSeleccionada.descripcion }}
+            </p>
+          </div>
+          <ng-template #headerEdicion>
+            <div>
+              <h2 class="text-xl font-bold text-gray-900 mb-1">
+                Editar receta
+              </h2>
+              <p class="text-sm text-gray-500">
+                Modifica los datos de tu receta y guarda los cambios.
+              </p>
+            </div>
+          </ng-template>
+          <button
+            type="button"
+            (click)="cerrarDetalleReceta()"
+            class="ml-4 text-gray-400 hover:text-gray-600 rounded-full p-1 hover:bg-gray-100"
+          >
+            x
+          </button>
+        </div>
+        <div class="relative h-60 bg-gray-50 overflow-hidden">
+          <img
+            [src]="(editandoReceta ? formReceta.url_imagen : recetaSeleccionada.urlimagen) || noDisponibleImg"
+            [alt]="'Receta: ' + (editandoReceta ? formReceta.titulo : recetaSeleccionada.titulo)"
+            class="w-full h-full object-cover"
+            (error)="onImageError($event)"
+          />
+          <div class="absolute top-3 right-3 flex items-center gap-1">
+            <span
+              *ngIf="recetaSeleccionada.esFavorita"
+              class="bg-amber-400 text-amber-900 px-3 py-1 rounded-full text-[11px] font-semibold shadow-md border border-amber-500"
+            >
+              Favorita
+            </span>
+            <span
+              *ngIf="recetaSeleccionada.predeterminada"
+              class="bg-blue-600 text-white px-3 py-1 rounded-full text-[11px] font-semibold shadow-md"
+            >
+              Predet.
+            </span>
+            <span
+              *ngIf="recetaSeleccionada.compartida"
+              class="bg-green-600 text-white px-3 py-1 rounded-full text-[11px] font-semibold shadow-md"
+            >
+              Compartida
+            </span>
+          </div>
+        </div>
+        <div class="px-6 py-5 space-y-6">
+          <div *ngIf="editandoReceta; else vistaSoloLectura">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Título</label>
+                <input
+                  type="text"
+                  [(ngModel)]="formReceta.titulo"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                <textarea
+                  rows="2"
+                  [(ngModel)]="formReceta.descripcion"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">URL imagen</label>
+                <input
+                  type="text"
+                  [(ngModel)]="formReceta.url_imagen"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div class="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-3">
+                <div class="flex items-center justify-between mb-1">
+                  <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Ingredientes
+                  </h3>
+                  <span class="text-xs text-gray-500">
+                    {{ formReceta.ingredientes.length || 0 }} añadidos
+                  </span>
+                </div>
+                <div class="relative mb-3">
+                  <input
+                    [(ngModel)]="queryIngredientes"
+                    (input)="buscarIngredientes(queryIngredientes)"
+                    class="w-full pl-3 pr-3 py-2 border border-emerald-300 rounded-lg text-sm
+                          focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500"
+                    placeholder="Busca un producto (arroz, tomate, aceite...)"
+                  />
+                  <div
+                    *ngIf="resultadosIngredientes.length > 0"
+                    class="absolute mt-1 w-full max-h-52 overflow-y-auto bg-white border border-emerald-200 rounded-lg shadow-lg z-20"
+                  >
+                    <div
+                      *ngFor="let producto of resultadosIngredientes"
+                      (click)="seleccionarIngrediente(producto); $event.stopPropagation()"
+                      class="px-3 py-2 text-sm hover:bg-emerald-50 cursor-pointer border-b last:border-b-0 border-emerald-100 flex justify-between items-center"
+                    >
+                      <div>
+                        <div class="font-medium text-gray-900">
+                          {{ producto.nombre }}
+                        </div>
+                        <div class="text-xs text-emerald-700">
+                          {{ producto.supermercado }}
+                          <span class="text-gray-600">
+                            · {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="text-lg text-emerald-600 font-bold">+</div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="formReceta.ingredientes.length > 0; else sinIngredientesEdit">
+                  <div
+                    *ngFor="let ing of formReceta.ingredientes; let i = index"
+                    class="flex items-center gap-2 bg-white rounded-lg border border-gray-200 px-3 py-2 mb-2"
+                  >
+                    <input
+                      [ngModel]="ing.nombre"
+                      readonly
+                      class="flex-1 bg-transparent text-sm font-medium text-gray-900 border-b border-dashed border-gray-300 cursor-not-allowed"
+                    />
+                    <input
+                      [(ngModel)]="ing.cantidad"
+                      class="w-24 px-2 py-1 border border-gray-300 rounded-md text-xs text-center"
+                      placeholder="500g"
+                    />
+                    <button
+                      type="button"
+                      (click)="removerIngrediente(i)"
+                      class="text-red-500 hover:text-red-700 text-lg px-2"
+                    >
+                      x
+                    </button>
+                  </div>
+                </div>
+                <ng-template #sinIngredientesEdit>
+                  <p class="text-xs text-gray-400">
+                    No hay ingredientes. Usa el buscador para añadir algunos.
+                  </p>
+                </ng-template>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Pasos (uno por línea)</label>
+                <textarea
+                  rows="5"
+                  [(ngModel)]="formReceta.pasos"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ></textarea>
+              </div>
+              <div class="flex items-center gap-4">
+                <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                  <input type="checkbox" [(ngModel)]="formReceta.predeterminada" class="rounded" />
+                  Predeterminada
+                </label>
+                <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                  <input type="checkbox" [(ngModel)]="formReceta.compartida" class="rounded" />
+                  Compartida
+                </label>
+              </div>
+            </div>
+          </div>
+          <ng-template #vistaSoloLectura>
+            <div>
+              <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                Ingredientes
+              </h3>
+              <div *ngIf="ingredientesDetalle.length > 0; else sinIngredientes">
+                <ul class="space-y-1.5 text-sm text-gray-700">
+                  <li *ngFor="let ing of ingredientesDetalle">
+                    · {{ ing.cantidad }}{{ ing.unidad ? ' ' + ing.unidad : '' }} – {{ ing.nombre }}
+                  </li>
+                </ul>
+              </div>
+              <ng-template #sinIngredientes>
+                <p class="text-sm text-gray-400">No hay ingredientes detallados.</p>
+              </ng-template>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                Pasos
+              </h3>
+              <div *ngIf="pasosDetalle.length > 0; else sinPasos">
+                <ol class="list-decimal list-inside space-y-1.5 text-sm text-gray-700">
+                  <li *ngFor="let paso of pasosDetalle">
+                    {{ paso }}
+                  </li>
+                </ol>
+              </div>
+              <ng-template #sinPasos>
+                <p class="text-sm text-gray-400">No hay pasos especificados.</p>
+              </ng-template>
+            </div>
+          </ng-template>
+        </div>
+        <div class="flex justify-end gap-2 border-t border-gray-100 px-6 py-3">
+          <button
+            type="button"
+            (click)="cerrarDetalleReceta()"
+            class="px-4 py-2 text-sm font-semibold text-gray-600 rounded-lg hover:bg-gray-100"
+          >
+            Cancelar
+          </button>
+          <button
+            *ngIf="editandoReceta"
+            type="button"
+            (click)="guardarRecetaEditada()"
+            class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm"
+          >
+            Guardar cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

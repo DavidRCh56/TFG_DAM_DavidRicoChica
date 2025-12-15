@@ -1,0 +1,10 @@
+.vscode/*
+__pycache__/*
+.venv
+__pycache__
+imagenes-icono.ico
+test.txt
+export/*.csv
+.env
+*.docx
+venv
